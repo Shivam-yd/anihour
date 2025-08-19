@@ -353,15 +353,24 @@ class AnimeTracker {
         const rating = anime.score ? anime.score.toFixed(1) : 'N/A';
         const status = this.formatStatus(anime.status);
         
-        // More robust image URL handling
+        // More robust image URL handling with proxy
         let image = '';
         if (anime.images && anime.images.jpg) {
-            image = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
+            const originalImage = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
+            if (originalImage && originalImage.startsWith('https://cdn.myanimelist.net/')) {
+                image = `/api/image-proxy?url=${encodeURIComponent(originalImage)}`;
+            } else {
+                image = originalImage;
+            }
         } else if (anime.image_url) {
-            image = anime.image_url;
+            if (anime.image_url.startsWith('https://cdn.myanimelist.net/')) {
+                image = `/api/image-proxy?url=${encodeURIComponent(anime.image_url)}`;
+            } else {
+                image = anime.image_url;
+            }
         }
         
-        console.log('Creating card for:', anime.title, 'Image URL:', image);
+        console.log('Creating card for:', anime.title, 'Proxied Image URL:', image);
         
         // Use placeholder if no valid image found
         if (!image) {
@@ -407,12 +416,21 @@ class AnimeTracker {
 
         const rating = anime.score ? anime.score.toFixed(1) : 'N/A';
         
-        // Better image handling for details page
+        // Better image handling for details page with proxy
         let image = '';
         if (anime.images && anime.images.jpg) {
-            image = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
+            const originalImage = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
+            if (originalImage && originalImage.startsWith('https://cdn.myanimelist.net/')) {
+                image = `/api/image-proxy?url=${encodeURIComponent(originalImage)}`;
+            } else {
+                image = originalImage;
+            }
         } else if (anime.image_url) {
-            image = anime.image_url;
+            if (anime.image_url.startsWith('https://cdn.myanimelist.net/')) {
+                image = `/api/image-proxy?url=${encodeURIComponent(anime.image_url)}`;
+            } else {
+                image = anime.image_url;
+            }
         }
         
         if (!image) {
