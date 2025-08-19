@@ -500,15 +500,68 @@ body::before {
     opacity: 0.1;
 }
 
-.anime-card-img {
+.anime-card-image-container {
+    position: relative;
     width: 100%;
     height: 300px;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(78, 205, 196, 0.1));
+}
+
+.anime-card-image-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    border: 2px solid rgba(255, 107, 157, 0.3);
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+.anime-card-img:not([src=""]) + .anime-card-image-container::before,
+.anime-card-image-container:has(.anime-card-img[data-loaded]) ::before {
+    display: none;
+}
+
+.anime-card-img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     transition: all 0.4s ease;
+    display: block;
 }
 
 .anime-card:hover .anime-card-img {
     transform: scale(1.05);
+}
+
+.anime-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.anime-card:hover .anime-card-overlay {
+    opacity: 1;
+}
+
+.anime-card-overlay i {
+    font-size: 3rem;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .anime-card-body {

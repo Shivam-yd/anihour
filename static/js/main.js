@@ -348,12 +348,36 @@ class AnimeTracker {
     createAnimeCard(anime) {
         const rating = anime.score ? anime.score.toFixed(1) : 'N/A';
         const status = this.formatStatus(anime.status);
-        const image = anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url || '';
+        
+        // More robust image URL handling
+        let image = '';
+        if (anime.images && anime.images.jpg) {
+            image = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
+        } else if (anime.image_url) {
+            image = anime.image_url;
+        }
+        
+        // Use placeholder if no valid image found
+        if (!image) {
+            image = this.getPlaceholderImage();
+        }
+        
         const synopsis = anime.synopsis ? this.truncateText(anime.synopsis, 150) : 'No synopsis available.';
+        const placeholderImg = this.getPlaceholderImage();
         
         return `
             <div class="anime-card" data-anime-id="${anime.mal_id}">
-                <img src="${image}" alt="${anime.title}" class="anime-card-img" loading="lazy">
+                <div class="anime-card-image-container">
+                    <img src="${image}" 
+                         alt="${anime.title}" 
+                         class="anime-card-img" 
+                         loading="lazy"
+                         onerror="this.src='${placeholderImg}'; this.onerror=null;"
+                         onload="this.setAttribute('data-loaded', 'true');">
+                    <div class="anime-card-overlay">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                </div>
                 <div class="anime-card-body">
                     <h3 class="anime-card-title">${anime.title}</h3>
                     <div class="anime-card-info">
@@ -366,12 +390,29 @@ class AnimeTracker {
         `;
     }
 
+    getPlaceholderImage() {
+        // Generate a colorful placeholder SVG for anime cards
+        return `data:image/svg+xml;charset=UTF-8,%3csvg width='300' height='400' xmlns='http://www.w3.org/2000/svg'%3e%3cdefs%3e%3clinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3e%3cstop offset='0%25' style='stop-color:%23ff6b9d;stop-opacity:1' /%3e%3cstop offset='100%25' style='stop-color:%234ecdc4;stop-opacity:1' /%3e%3c/linearGradient%3e%3c/defs%3e%3crect width='300' height='400' fill='url(%23grad)'/%3e%3ctext x='50%25' y='50%25' font-family='Arial, sans-serif' font-size='18' fill='white' text-anchor='middle' dy='.3em'%3eAnime Image%3c/text%3e%3c/svg%3e`;
+    }
+
     displayAnimeDetails(containerId, anime, characters) {
         const container = document.getElementById(containerId);
         if (!container) return;
 
         const rating = anime.score ? anime.score.toFixed(1) : 'N/A';
-        const image = anime.images?.jpg?.large_image_url || '';
+        
+        // Better image handling for details page
+        let image = '';
+        if (anime.images && anime.images.jpg) {
+            image = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
+        } else if (anime.image_url) {
+            image = anime.image_url;
+        }
+        
+        if (!image) {
+            image = this.getPlaceholderImage();
+        }
+        
         const synopsis = anime.synopsis || 'No synopsis available.';
         const genres = anime.genres ? anime.genres.map(g => g.name).join(', ') : 'Unknown';
         
