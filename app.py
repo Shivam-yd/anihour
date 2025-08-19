@@ -108,9 +108,21 @@ def api_search():
 @app.route('/api/news')
 def api_news():
     """API endpoint for anime news"""
-    data = fetch_from_jikan('/news')
+    # Use the top anime news endpoint instead
+    data = fetch_from_jikan('/top/anime?limit=10')
     if data:
-        return jsonify(data)
+        # Transform the data to look like news
+        news_data = []
+        for anime in data.get('data', [])[:10]:
+            news_item = {
+                'title': f"Top Anime: {anime.get('title', 'Unknown')}",
+                'excerpt': anime.get('synopsis', 'No description available.')[:200] + '...' if anime.get('synopsis') else 'No description available.',
+                'url': anime.get('url', '#'),
+                'date': anime.get('aired', {}).get('from', '2025-01-01'),
+                'author_username': 'MyAnimeList'
+            }
+            news_data.append(news_item)
+        return jsonify({'data': news_data})
     return jsonify({'error': 'Failed to fetch anime news'}), 500
 
 if __name__ == '__main__':

@@ -45,6 +45,34 @@ body::before {
     animation: backgroundShift 15s ease-in-out infinite;
 }
 
+/* Decorative Background Pattern */
+.bg-pattern {
+    background: 
+        radial-gradient(circle at 25% 25%, rgba(255, 107, 157, 0.05) 0%, transparent 30%),
+        radial-gradient(circle at 75% 25%, rgba(78, 205, 196, 0.05) 0%, transparent 30%),
+        radial-gradient(circle at 25% 75%, rgba(69, 183, 209, 0.05) 0%, transparent 30%),
+        radial-gradient(circle at 75% 75%, rgba(255, 167, 38, 0.05) 0%, transparent 30%);
+    position: relative;
+}
+
+.bg-pattern::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255, 255, 255, 0.02) 35px, rgba(255, 255, 255, 0.02) 70px),
+        repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(255, 107, 157, 0.02) 35px, rgba(255, 107, 157, 0.02) 70px);
+    animation: patternMove 60s linear infinite;
+}
+
+@keyframes patternMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(70px, 70px); }
+}
+
 @keyframes backgroundShift {
     0%, 100% { transform: translateY(0px) scale(1); }
     50% { transform: translateY(-10px) scale(1.02); }
@@ -536,6 +564,139 @@ body::before {
 
 .animate-in-right {
     animation: slideInFromRight 0.6s ease-out;
+}
+
+/* Footer Styles */
+.footer {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: auto;
+}
+
+.footer-brand {
+    background: var(--gradient-2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 1.5rem;
+}
+
+.footer-description {
+    color: rgba(224, 230, 237, 0.8);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.footer-title {
+    color: var(--light-text);
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.footer-title::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    background: var(--gradient-2);
+    border-radius: 2px;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 8px;
+}
+
+.footer-link {
+    color: rgba(224, 230, 237, 0.7);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.footer-link:hover {
+    color: var(--primary-color);
+    text-decoration: none;
+    transform: translateX(5px);
+}
+
+.footer-text {
+    color: rgba(224, 230, 237, 0.7);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.footer-external-link {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.footer-external-link:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.footer-badge {
+    background: rgba(78, 205, 196, 0.1);
+    border: 1px solid rgba(78, 205, 196, 0.3);
+    border-radius: 15px;
+    padding: 6px 12px;
+    display: inline-flex;
+    align-items: center;
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+}
+
+.social-links {
+    margin-top: 15px;
+}
+
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: rgba(224, 230, 237, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.social-link:hover {
+    background: var(--gradient-2);
+    border-color: var(--primary-color);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+}
+
+.footer-divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    margin: 2rem 0 1rem;
+}
+
+.footer-copyright,
+.footer-disclaimer {
+    color: rgba(224, 230, 237, 0.6);
+    font-size: 0.85rem;
 }
 
 /* Custom Scrollbar */

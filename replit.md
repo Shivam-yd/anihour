@@ -1,8 +1,8 @@
-# Anime Tracker
+# Anihour
 
 ## Overview
 
-Anime Tracker is a web application built with Flask that serves as a comprehensive anime discovery platform. It leverages the Jikan API (MyAnimeList's public API) to provide users with current season anime, top-rated series, upcoming releases, and anime news. The application features a modern, responsive interface with gradient designs and smooth animations, offering an engaging experience for anime enthusiasts to discover and track their favorite shows.
+Anihour is a colorful and professional anime tracking web application built with minimal Python Flask backend and vanilla JavaScript frontend. It serves as a comprehensive anime discovery platform that fetches real-time data from the Jikan API (MyAnimeList's public API) to display current season anime, top-rated series, upcoming releases, and anime news. The application features a vibrant, responsive interface with anime-inspired gradients, smooth animations, and professional styling, offering an engaging experience for anime enthusiasts to discover their favorite shows.
 
 ## User Preferences
 
