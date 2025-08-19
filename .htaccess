@@ -1,7 +1,7 @@
 DirectoryIndex passenger_wsgi.py
 PassengerEnabled On
-PassengerAppRoot /home/yourusername/public_html/flask_app
-PassengerBaseURI /flask_app
+PassengerAppRoot /home/yourusername/public_html/anihour.com/flask_app
+PassengerBaseURI /
 PassengerPython /usr/bin/python3.9
 
 RewriteEngine On
