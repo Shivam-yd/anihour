@@ -1,8 +1,9 @@
 import os
 import logging
 import requests
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, Response
 from flask_cors import CORS
+import urllib.parse
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -124,6 +125,34 @@ def api_news():
             news_data.append(news_item)
         return jsonify({'data': news_data})
     return jsonify({'error': 'Failed to fetch anime news'}), 500
+
+@app.route('/api/image-proxy')
+def image_proxy():
+    """Proxy images to avoid CORS and ad-blocker issues"""
+    image_url = request.args.get('url')
+    if not image_url:
+        return jsonify({'error': 'URL parameter required'}), 400
+    
+    # Only allow MyAnimeList CDN images for security
+    if not image_url.startswith('https://cdn.myanimelist.net/'):
+        return jsonify({'error': 'Invalid image source'}), 400
+    
+    try:
+        response = requests.get(image_url, timeout=10, stream=True)
+        response.raise_for_status()
+        
+        # Return the image with proper headers
+        return Response(
+            response.content,
+            content_type=response.headers.get('content-type', 'image/jpeg'),
+            headers={
+                'Cache-Control': 'public, max-age=3600',
+                'Access-Control-Allow-Origin': '*'
+            }
+        )
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error proxying image {image_url}: {e}")
+        return jsonify({'error': 'Failed to load image'}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

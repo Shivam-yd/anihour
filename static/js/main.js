@@ -166,9 +166,13 @@ class AnimeTracker {
             const response = await fetch('/api/current-season');
             const data = await response.json();
 
+            console.log('Current season API response:', data);
+
             if (response.ok && data.data) {
+                console.log('Displaying', data.data.length, 'anime');
                 this.displayCompactAnimeGrid('currentSeasonAnime', data.data.slice(0, 8), 'Current Season');
             } else {
+                console.error('API response not ok:', response.status, data);
                 this.showError('currentSeasonAnime', 'Failed to load current season anime');
             }
         } catch (error) {
@@ -349,27 +353,42 @@ class AnimeTracker {
         const rating = anime.score ? anime.score.toFixed(1) : 'N/A';
         const status = this.formatStatus(anime.status);
         
-        // Get the best available image URL
-        let imageUrl = '';
+        // More robust image URL handling with proxy
+        let image = '';
         if (anime.images && anime.images.jpg) {
-            imageUrl = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
+            const originalImage = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
+            if (originalImage && originalImage.startsWith('https://cdn.myanimelist.net/')) {
+                image = `/api/image-proxy?url=${encodeURIComponent(originalImage)}`;
+            } else {
+                image = originalImage;
+            }
         } else if (anime.image_url) {
-            imageUrl = anime.image_url;
+            if (anime.image_url.startsWith('https://cdn.myanimelist.net/')) {
+                image = `/api/image-proxy?url=${encodeURIComponent(anime.image_url)}`;
+            } else {
+                image = anime.image_url;
+            }
         }
         
-        const placeholderImg = this.getPlaceholderImage();
+        console.log('Creating card for:', anime.title, 'Proxied Image URL:', image);
+        
+        // Use placeholder if no valid image found
+        if (!image) {
+            image = this.getPlaceholderImage();
+        }
         
         const synopsis = anime.synopsis ? this.truncateText(anime.synopsis, 150) : 'No synopsis available.';
+        const placeholderImg = this.getPlaceholderImage();
         
         return `
             <div class="anime-card" data-anime-id="${anime.mal_id}">
                 <div class="anime-card-image-container">
-                    <img src="${placeholderImg}" 
+                    <img src="${image}" 
                          alt="${anime.title}" 
                          class="anime-card-img" 
-                         data-original-url="${imageUrl}"
-                         data-anime-id="${anime.mal_id}"
-                         loading="lazy">
+                         loading="lazy"
+                         onerror="console.error('Image failed to load:', '${image}'); this.src='${placeholderImg}'; this.onerror=null;"
+                         onload="console.log('Image loaded:', '${anime.title}'); this.setAttribute('data-loaded', 'true');">
                     <div class="anime-card-overlay">
                         <i class="fas fa-play-circle"></i>
                     </div>
@@ -386,50 +405,9 @@ class AnimeTracker {
         `;
     }
 
-    async loadImageWithFetch(imgElement) {
-        const originalUrl = imgElement.getAttribute('data-original-url');
-        if (!originalUrl) return;
-
-        try {
-            // First try direct loading
-            const testImg = new Image();
-            testImg.crossOrigin = 'anonymous';
-            
-            testImg.onload = () => {
-                imgElement.src = originalUrl;
-                imgElement.setAttribute('data-loaded', 'true');
-            };
-            
-            testImg.onerror = async () => {
-                // If direct loading fails, try with different referrer policy
-                try {
-                    const img = new Image();
-                    img.crossOrigin = 'anonymous';
-                    img.referrerPolicy = 'no-referrer';
-                    
-                    img.onload = () => {
-                        imgElement.src = originalUrl;
-                        imgElement.setAttribute('data-loaded', 'true');
-                    };
-                    
-                    img.onerror = () => {
-                        console.log('Could not load image:', originalUrl);
-                    };
-                    
-                    img.src = originalUrl;
-                } catch (error) {
-                    console.log('Error loading image:', error);
-                }
-            };
-            
-            testImg.src = originalUrl;
-        } catch (error) {
-            console.log('Error loading image:', error);
-        }
-    }
-
     getPlaceholderImage() {
-        return `data:image/svg+xml;charset=UTF-8,%3csvg width='300' height='400' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='300' height='400' fill='%23f0f0f0'/%3e%3ctext x='50%25' y='50%25' font-family='Arial, sans-serif' font-size='16' fill='%23999' text-anchor='middle' dy='.3em'%3eLoading...%3c/text%3e%3c/svg%3e`;
+        // Generate a colorful placeholder SVG for anime cards
+        return `data:image/svg+xml;charset=UTF-8,%3csvg width='300' height='400' xmlns='http://www.w3.org/2000/svg'%3e%3cdefs%3e%3clinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3e%3cstop offset='0%25' style='stop-color:%23ff6b9d;stop-opacity:1' /%3e%3cstop offset='100%25' style='stop-color:%234ecdc4;stop-opacity:1' /%3e%3c/linearGradient%3e%3c/defs%3e%3crect width='300' height='400' fill='url(%23grad)'/%3e%3ctext x='50%25' y='50%25' font-family='Arial, sans-serif' font-size='18' fill='white' text-anchor='middle' dy='.3em'%3eAnime Image%3c/text%3e%3c/svg%3e`;
     }
 
     displayAnimeDetails(containerId, anime, characters) {
@@ -438,12 +416,21 @@ class AnimeTracker {
 
         const rating = anime.score ? anime.score.toFixed(1) : 'N/A';
         
-        // Use actual image for details page
+        // Better image handling for details page with proxy
         let image = '';
         if (anime.images && anime.images.jpg) {
-            image = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
+            const originalImage = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
+            if (originalImage && originalImage.startsWith('https://cdn.myanimelist.net/')) {
+                image = `/api/image-proxy?url=${encodeURIComponent(originalImage)}`;
+            } else {
+                image = originalImage;
+            }
         } else if (anime.image_url) {
-            image = anime.image_url;
+            if (anime.image_url.startsWith('https://cdn.myanimelist.net/')) {
+                image = `/api/image-proxy?url=${encodeURIComponent(anime.image_url)}`;
+            } else {
+                image = anime.image_url;
+            }
         }
         
         if (!image) {
@@ -540,12 +527,6 @@ class AnimeTracker {
                     window.location.href = `/anime/${animeId}`;
                 }
             });
-        });
-
-        // Load actual anime images using fetch to bypass ad blockers
-        const images = document.querySelectorAll('.anime-card-img[data-original-url]');
-        images.forEach(img => {
-            this.loadImageWithFetch(img);
         });
     }
 
