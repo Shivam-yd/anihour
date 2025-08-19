@@ -701,7 +701,7 @@ body::before {
 .btn-primary {
     background: linear-gradient(135deg, #ff6b9d 0%, #4ecdc4 100%);
     border: none;
-    color: white;
+    color: white !important;
     box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
 }
 
@@ -716,6 +716,7 @@ body::before {
     opacity: 0;
     transition: all 0.4s ease;
     border-radius: 50px;
+    z-index: -1;
 }
 
 .btn-primary:hover {
@@ -732,8 +733,14 @@ body::before {
 .btn-primary span,
 .btn-primary * {
     position: relative;
-    z-index: 1;
-    color: inherit !important;
+    z-index: 2 !important;
+    color: white !important;
+}
+
+.btn-primary:hover i,
+.btn-primary:hover span,
+.btn-primary:hover * {
+    color: white !important;
 }
 
 .btn-outline-primary {
