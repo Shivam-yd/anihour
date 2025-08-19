@@ -9,11 +9,6 @@
     <div class="hero-slideshow" id="heroSlideshow">
         <!-- Images will be loaded dynamically -->
     </div>
-    
-    <!-- Slideshow Indicators -->
-    <div class="slideshow-indicators" id="slideshowIndicators">
-        <!-- Dots will be loaded dynamically -->
-    </div>
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 col-md-12">
@@ -184,10 +179,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function initializeSlideshow() {
         const slideshowContainer = document.getElementById('heroSlideshow');
-        const indicatorsContainer = document.getElementById('slideshowIndicators');
         
-        if (!slideshowContainer || !indicatorsContainer) {
-            console.error('Slideshow containers not found');
+        if (!slideshowContainer) {
+            console.error('Slideshow container not found');
             return;
         }
         
@@ -214,25 +208,6 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             slideshowContainer.appendChild(img);
-            
-            // Create title overlay
-            const titleOverlay = document.createElement('div');
-            titleOverlay.className = `anime-title-overlay${index === 0 ? ' active' : ''}`;
-            titleOverlay.dataset.slideIndex = index;
-            titleOverlay.innerHTML = `
-                <div class="anime-type-badge">${imageData.type === 'current' ? 'Current Season' : 'Top Rated'}</div>
-                <div class="anime-title">${imageData.title}</div>
-            `;
-            slideshowContainer.appendChild(titleOverlay);
-            
-            // Create indicator dot
-            const dot = document.createElement('div');
-            dot.className = `slideshow-dot${index === 0 ? ' active' : ''}`;
-            dot.dataset.slideIndex = index;
-            dot.title = imageData.title;
-            dot.addEventListener('click', () => goToSlide(index));
-            
-            indicatorsContainer.appendChild(dot);
         });
         
         console.log(`Initialized slideshow with ${slideshowImages.length} images`);
@@ -247,21 +222,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function goToSlide(index) {
         const images = document.querySelectorAll('.hero-slideshow-image');
-        const dots = document.querySelectorAll('.slideshow-dot');
-        const titleOverlays = document.querySelectorAll('.anime-title-overlay');
         
         if (images.length === 0 || index >= images.length) return;
         
-        // Remove active classes from current slide
+        // Remove active class from current slide
         images[currentSlideIndex]?.classList.remove('active');
-        dots[currentSlideIndex]?.classList.remove('active');
-        titleOverlays[currentSlideIndex]?.classList.remove('active');
         
         // Set new active slide
         currentSlideIndex = index;
         images[currentSlideIndex].classList.add('active');
-        dots[currentSlideIndex].classList.add('active');
-        titleOverlays[currentSlideIndex].classList.add('active');
         
         // Restart auto slide timer
         restartAutoSlide();
