@@ -206,7 +206,8 @@ document.addEventListener('DOMContentLoaded', function() {
             img.src = `/api/image-proxy?url=${encodeURIComponent(imageData.image_url)}`;
             img.alt = imageData.title;
             img.className = `hero-slideshow-image${index === 0 ? ' active' : ''}`;
-            img.loading = index < 3 ? 'eager' : 'lazy';
+            img.loading = index < 2 ? 'eager' : 'lazy';
+            img.decoding = 'async';
             img.dataset.slideIndex = index;
             
             // Handle image load

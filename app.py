@@ -4,6 +4,8 @@ import requests
 from flask import Flask, render_template, jsonify, request, Response
 from flask_cors import CORS
 import urllib.parse
+import time
+from functools import lru_cache
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -16,13 +18,37 @@ CORS(app)
 # Jikan API base URL (MyAnimeList public API)
 JIKAN_BASE_URL = "https://api.jikan.moe/v4"
 
+# Simple in-memory cache
+cache = {}
+CACHE_DURATION = 300  # 5 minutes
+
 def fetch_from_jikan(endpoint):
-    """Fetch data from Jikan API with error handling"""
+    """Fetch data from Jikan API with caching and error handling"""
+    cache_key = endpoint
+    current_time = time.time()
+    
+    # Check cache first
+    if cache_key in cache:
+        cached_data, timestamp = cache[cache_key]
+        if current_time - timestamp < CACHE_DURATION:
+            return cached_data
+    
     try:
         url = f"{JIKAN_BASE_URL}{endpoint}"
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, timeout=5)  # Reduced timeout
         response.raise_for_status()
-        return response.json()
+        data = response.json()
+        
+        # Cache the response
+        cache[cache_key] = (data, current_time)
+        
+        # Clean old cache entries (basic cleanup)
+        if len(cache) > 100:
+            old_keys = [k for k, (_, t) in cache.items() if current_time - t > CACHE_DURATION]
+            for key in old_keys[:50]:  # Remove oldest 50 entries
+                cache.pop(key, None)
+        
+        return data
     except requests.exceptions.RequestException as e:
         logging.error(f"Error fetching from Jikan API: {e}")
         return None
@@ -128,16 +154,16 @@ def api_news():
 
 @app.route('/api/hero-slideshow-images')
 def api_hero_slideshow_images():
-    """API endpoint for hero section slideshow images"""
-    # Get both current season and top anime for variety
+    """Optimized API endpoint for hero section slideshow images"""
+    # Get both current season and top anime for variety (reduced limits for speed)
     current_season = fetch_from_jikan('/seasons/now')
-    top_anime = fetch_from_jikan('/top/anime?type=tv&limit=15')
+    top_anime = fetch_from_jikan('/top/anime?type=tv&limit=10')  # Reduced from 15
     
     images = []
     
     if current_season and current_season.get('data'):
-        # Get images from current season anime (first 8)
-        for anime in current_season['data'][:8]:
+        # Get images from current season anime (reduced to 6 for faster loading)
+        for anime in current_season['data'][:6]:
             if anime.get('images', {}).get('jpg', {}).get('large_image_url'):
                 images.append({
                     'title': anime.get('title', ''),
@@ -146,8 +172,8 @@ def api_hero_slideshow_images():
                 })
     
     if top_anime and top_anime.get('data'):
-        # Get images from top anime (first 7)
-        for anime in top_anime['data'][:7]:
+        # Get images from top anime (reduced to 4 for faster loading)
+        for anime in top_anime['data'][:4]:
             if anime.get('images', {}).get('jpg', {}).get('large_image_url'):
                 images.append({
                     'title': anime.get('title', ''),
@@ -155,11 +181,14 @@ def api_hero_slideshow_images():
                     'type': 'top'
                 })
     
-    return jsonify({'images': images})
+    # Add cache headers for this endpoint too
+    response = jsonify({'images': images})
+    response.headers['Cache-Control'] = 'public, max-age=300'  # 5 minutes
+    return response
 
 @app.route('/api/image-proxy')
 def image_proxy():
-    """Proxy images to avoid CORS and ad-blocker issues"""
+    """Optimized image proxy with caching and better performance"""
     image_url = request.args.get('url')
     if not image_url:
         return jsonify({'error': 'URL parameter required'}), 400
@@ -168,18 +197,52 @@ def image_proxy():
     if not image_url.startswith('https://cdn.myanimelist.net/'):
         return jsonify({'error': 'Invalid image source'}), 400
     
+    # Use image URL as cache key
+    cache_key = f"img_{hash(image_url)}"
+    current_time = time.time()
+    
+    # Check cache first for images (longer cache duration)
+    if cache_key in cache:
+        cached_data, timestamp = cache[cache_key]
+        if current_time - timestamp < 1800:  # 30 minutes for images
+            return Response(
+                cached_data['content'],
+                content_type=cached_data['content_type'],
+                headers=cached_data['headers']
+            )
+    
     try:
-        response = requests.get(image_url, timeout=10, stream=True)
+        # Optimized request with better headers
+        response = requests.get(
+            image_url, 
+            timeout=8,
+            stream=True,
+            headers={
+                'User-Agent': 'Mozilla/5.0 (compatible; AnihourBot/1.0)',
+                'Accept': 'image/webp,image/avif,image/*,*/*;q=0.8'
+            }
+        )
         response.raise_for_status()
         
-        # Return the image with proper headers
+        # Optimize response headers
+        headers = {
+            'Cache-Control': 'public, max-age=7200, immutable',  # 2 hours cache
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': response.headers.get('content-type', 'image/jpeg'),
+            'X-Content-Type-Options': 'nosniff'
+        }
+        
+        # Cache the image response
+        cache[cache_key] = {
+            'content': response.content,
+            'content_type': response.headers.get('content-type', 'image/jpeg'),
+            'headers': headers
+        }
+        
         return Response(
             response.content,
             content_type=response.headers.get('content-type', 'image/jpeg'),
-            headers={
-                'Cache-Control': 'public, max-age=3600',
-                'Access-Control-Allow-Origin': '*'
-            }
+            headers=headers
         )
     except requests.exceptions.RequestException as e:
         logging.error(f"Error proxying image {image_url}: {e}")
