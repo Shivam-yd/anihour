@@ -523,17 +523,31 @@ body::before {
     z-index: 1;
 }
 
-.anime-card-img:not([src=""]) + .anime-card-image-container::before,
-.anime-card-image-container:has(.anime-card-img[data-loaded]) ::before {
+/* Hide loading spinner when image is loaded */
+.anime-card-img[data-loaded="true"] ~ .loading-spinner,
+.anime-card-image-container .loading-spinner {
     display: none;
+}
+
+.anime-card-img[data-loaded="true"] {
+    opacity: 1;
+}
+
+.anime-card-img:not([data-loaded]) {
+    opacity: 0;
 }
 
 .anime-card-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: all 0.4s ease;
+    transition: opacity 0.3s ease, transform 0.4s ease;
     display: block;
+    opacity: 0;
+}
+
+.anime-card-img[data-loaded="true"] {
+    opacity: 1;
 }
 
 .anime-card:hover .anime-card-img {

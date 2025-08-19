@@ -239,6 +239,12 @@ class AnimeTracker {
 
         container.innerHTML = html;
         this.setupAnimeCardEvents();
+        
+        // Ensure loading states are cleared
+        setTimeout(() => {
+            const loadingStates = container.querySelectorAll('.loading-state, .loading-spinner');
+            loadingStates.forEach(el => el.style.display = 'none');
+        }, 100);
     }
 
     async loadCurrentSeason() {
@@ -387,7 +393,7 @@ class AnimeTracker {
                          alt="${anime.title}" 
                          class="anime-card-img" 
                          loading="lazy"
-                         onerror="console.error('Image failed to load:', '${image}'); this.src='${placeholderImg}'; this.onerror=null;"
+                         onerror="console.error('Image failed to load:', '${image}'); this.src='${placeholderImg}'; this.onerror=null; this.setAttribute('data-loaded', 'true');"
                          onload="console.log('Image loaded:', '${anime.title}'); this.setAttribute('data-loaded', 'true');">
                     <div class="anime-card-overlay">
                         <i class="fas fa-play-circle"></i>
