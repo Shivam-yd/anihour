@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anihour - Discover Amazing Anime</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Track ongoing anime, discover top-rated series, and stay updated with the latest anime news. Your ultimate anime tracking companion.">
+    <meta name="keywords" content="anime, manga, MyAnimeList, anime tracker, ongoing anime, top anime, upcoming anime">
+    <meta name="author" content="Anihour">
+    
+    <!-- Preconnect to external domains for faster loading -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://api.jikan.moe">
+    <link rel="preconnect" href="https://cdn.myanimelist.net">
+    
+    <!-- Bootstrap 5 CSS with optimized loading -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Font Awesome Icons with optimized loading -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="static/css/style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎌</text></svg>">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#home">
+                <span class="navbar-logo me-2">🎌</span>
+                Anihour
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto me-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">
+                            <i class="fas fa-home me-1"></i>Current Season
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#top">
+                            <i class="fas fa-trophy me-1"></i>Top Anime
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#upcoming">
+                            <i class="fas fa-clock me-1"></i>Upcoming
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#news">
+                            <i class="fas fa-newspaper me-1"></i>News
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Search Form -->
+                <form class="search-form" id="searchForm">
+                    <input type="text" class="form-control search-input" id="searchInput" 
+                           placeholder="Search anime..." autocomplete="off">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section" id="home">
+        <!-- Background Slideshow -->
+        <div class="hero-slideshow" id="heroSlideshow">
+            <!-- Images will be loaded dynamically -->
+        </div>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8 col-md-12">
+                    <h1 class="hero-title mb-4">
+                        Welcome to <span class="brand-highlight" style="color: #ff6b9d !important; -webkit-text-fill-color: #ff6b9d !important;">Anihour</span>
+                    </h1>
+                    <p class="hero-subtitle mb-4">
+                        Your ultimate destination for discovering amazing anime series, tracking favorites, and staying updated with the latest releases.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#top" class="btn btn-primary btn-lg me-3 mb-2">
+                            <i class="fas fa-trophy me-2"></i>Explore Top Anime
+                        </a>
+                        <a href="#upcoming" class="btn btn-outline-light btn-lg mb-2">
+                            <i class="fas fa-clock me-2"></i>See Upcoming
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-12">
+                    <div class="hero-image-placeholder" id="heroImageBox">
+                        <div class="hero-current-anime" id="heroCurrentAnime">
+                            <img id="heroAnimeImage" class="hero-anime-img" alt="Current Anime" style="display: none;">
+                            <div class="hero-anime-overlay">
+                                <i class="fas fa-play-circle hero-icon"></i>
+                                <div class="hero-anime-info">
+                                    <h4 id="heroAnimeTitle" class="hero-anime-title"></h4>
+                                    <p id="heroAnimeType" class="hero-anime-type"></p>
+                                </div>
+                            </div>
+                            <div class="hero-loading">
+                                <i class="fas fa-play-circle hero-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Section -->
+    <div class="stats-section">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-tv"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Current Season</h3>
+                            <p>Latest airing anime</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon secondary">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Top Rated</h3>
+                            <p>Best anime of all time</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon accent">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Upcoming</h3>
+                            <p>Future releases</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Latest News</h3>
+                            <p>Anime updates</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Season Section -->
+    <section class="content-section" id="current-season">
+        <div class="container">
+            <div class="section-header text-center mb-5">
+                <h2 class="section-title">Current Season Anime</h2>
+                <p class="section-subtitle">Discover what's currently airing</p>
+            </div>
+            
+            <div id="currentSeasonLoading" class="loading-state">
+                <div class="loader"></div>
+                <p>Loading current season anime...</p>
+            </div>
+            
+            <div id="currentSeasonContent" class="anime-grid" style="display: none;">
+                <!-- Anime cards will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Top Anime Section -->
+    <section class="content-section bg-pattern" id="top">
+        <div class="container">
+            <div class="section-header text-center mb-5">
+                <h2 class="section-title">Top Rated Anime</h2>
+                <p class="section-subtitle">The highest rated anime of all time</p>
+            </div>
+            
+            <div id="topAnimeLoading" class="loading-state">
+                <div class="loader"></div>
+                <p>Loading top anime...</p>
+            </div>
+            
+            <div id="topAnimeContent" class="anime-grid" style="display: none;">
+                <!-- Top anime cards will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Upcoming Section -->
+    <section class="content-section" id="upcoming">
+        <div class="container">
+            <div class="section-header text-center mb-5">
+                <h2 class="section-title">Upcoming Anime</h2>
+                <p class="section-subtitle">What's coming next season</p>
+            </div>
+            
+            <div id="upcomingLoading" class="loading-state">
+                <div class="loader"></div>
+                <p>Loading upcoming anime...</p>
+            </div>
+            
+            <div id="upcomingContent" class="anime-grid" style="display: none;">
+                <!-- Upcoming anime cards will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- News Section -->
+    <section class="content-section bg-pattern" id="news">
+        <div class="container">
+            <div class="section-header text-center mb-5">
+                <h2 class="section-title">Latest Anime News</h2>
+                <p class="section-subtitle">Stay updated with the anime world</p>
+            </div>
+            
+            <div id="newsLoading" class="loading-state">
+                <div class="loader"></div>
+                <p>Loading latest news...</p>
+            </div>
+            
+            <div id="newsContent" class="news-grid" style="display: none;">
+                <!-- News articles will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <p class="mb-1">&copy; 2025 Anihour. Made with ❤️ for anime fans worldwide.</p>
+                    <p class="small text-muted mb-0">Data provided by Jikan API (MyAnimeList)</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Discord">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    
+    <!-- Main JavaScript -->
+    <script src="static/js/static_main.js"></script>
+</body>
+</html>
