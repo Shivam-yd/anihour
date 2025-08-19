@@ -253,7 +253,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function updateHeroAnimeBox(index) {
-        if (!slideshowImages[index]) return;
+        if (!slideshowImages[index]) {
+            console.log('No slideshow image at index:', index);
+            return;
+        }
         
         const currentAnime = slideshowImages[index];
         const heroImg = document.getElementById('heroAnimeImage');
@@ -261,7 +264,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const heroType = document.getElementById('heroAnimeType');
         const heroLoading = document.querySelector('.hero-loading');
         
+        console.log('Updating hero anime box with:', currentAnime.title, 'at index:', index);
+        
         if (heroImg && heroTitle && heroType) {
+            // Reset image state
+            heroImg.classList.remove('loaded');
+            heroImg.style.display = 'none';
+            if (heroLoading) {
+                heroLoading.style.display = 'flex';
+            }
+            
             // Update image
             heroImg.src = `/api/image-proxy?url=${encodeURIComponent(currentAnime.image_url)}`;
             heroImg.alt = currentAnime.title;
@@ -272,6 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Handle image loading
             heroImg.onload = function() {
+                console.log('Hero anime image loaded:', currentAnime.title);
                 this.style.display = 'block';
                 this.classList.add('loaded');
                 if (heroLoading) {
@@ -280,11 +293,18 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             heroImg.onerror = function() {
+                console.error('Hero anime image failed to load:', currentAnime.title);
                 // Keep loading state if image fails
                 if (heroLoading) {
                     heroLoading.style.display = 'flex';
                 }
             };
+        } else {
+            console.error('Hero anime box elements not found:', {
+                heroImg: !!heroImg,
+                heroTitle: !!heroTitle,
+                heroType: !!heroType
+            });
         }
     }
     
