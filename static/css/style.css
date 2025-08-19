@@ -283,9 +283,6 @@ body::before {
 }
 
 .hero-image-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     height: 300px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 20px;
@@ -294,6 +291,13 @@ body::before {
     animation: fadeInUp 1s ease-out 0.6s both;
     position: relative;
     overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s ease;
+}
+
+.hero-image-placeholder:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
 }
 
 .hero-image-placeholder::before {
@@ -305,6 +309,84 @@ body::before {
     height: 200%;
     background: conic-gradient(from 0deg, transparent, rgba(255, 107, 157, 0.1), transparent, rgba(78, 205, 196, 0.1), transparent);
     animation: rotate 20s linear infinite;
+    opacity: 0.5;
+}
+
+.hero-current-anime {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-anime-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    opacity: 0;
+    transition: all 0.6s ease;
+}
+
+.hero-anime-img.loaded {
+    opacity: 1;
+}
+
+.hero-anime-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(145deg, rgba(26, 26, 46, 0.6) 0%, rgba(22, 33, 62, 0.4) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 2;
+    opacity: 0;
+    transition: all 0.4s ease;
+}
+
+.hero-anime-img.loaded + .hero-anime-overlay {
+    opacity: 1;
+}
+
+.hero-anime-info {
+    margin-top: 10px;
+}
+
+.hero-anime-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+.hero-anime-type {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.8);
+}
+
+.hero-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
 }
 
 .hero-icon {
@@ -312,6 +394,32 @@ body::before {
     color: var(--primary-color);
     z-index: 1;
     position: relative;
+    transition: all 0.3s ease;
+}
+
+.hero-image-placeholder:hover .hero-icon {
+    transform: scale(1.1);
+    color: var(--accent-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-image-placeholder {
+        height: 200px;
+        margin-top: 30px;
+    }
+    
+    .hero-anime-title {
+        font-size: 0.95rem;
+    }
+    
+    .hero-anime-type {
+        font-size: 0.8rem;
+    }
+    
+    .hero-icon {
+        font-size: 3rem;
+    }
 }
 
 @keyframes rotate {
