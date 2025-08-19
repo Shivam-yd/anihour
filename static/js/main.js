@@ -132,7 +132,7 @@ class AnimeTracker {
     loadPageContent() {
         switch (this.currentPage) {
             case '/':
-                this.loadCurrentSeason();
+                this.loadHomepageSections();
                 break;
             case '/top':
                 this.loadTopAnime();
@@ -149,6 +149,92 @@ class AnimeTracker {
                     this.loadAnimeDetails(animeId);
                 }
         }
+    }
+
+    async loadHomepageSections() {
+        // Load all homepage sections simultaneously
+        await Promise.all([
+            this.loadCurrentSeasonSection(),
+            this.loadTopAnimeSection(),
+            this.loadUpcomingAnimeSection()
+        ]);
+    }
+
+    async loadCurrentSeasonSection() {
+        try {
+            this.showLoadingState('currentSeasonAnime');
+            const response = await fetch('/api/current-season');
+            const data = await response.json();
+
+            if (response.ok && data.data) {
+                this.displayCompactAnimeGrid('currentSeasonAnime', data.data.slice(0, 8), 'Current Season');
+            } else {
+                this.showError('currentSeasonAnime', 'Failed to load current season anime');
+            }
+        } catch (error) {
+            console.error('Error loading current season:', error);
+            this.showError('currentSeasonAnime', 'Network error occurred');
+        }
+    }
+
+    async loadTopAnimeSection() {
+        try {
+            this.showLoadingState('topAnimeSection');
+            const response = await fetch('/api/top-anime?limit=8');
+            const data = await response.json();
+
+            if (response.ok && data.data) {
+                this.displayCompactAnimeGrid('topAnimeSection', data.data.slice(0, 8), 'Top Anime');
+            } else {
+                this.showError('topAnimeSection', 'Failed to load top anime');
+            }
+        } catch (error) {
+            console.error('Error loading top anime:', error);
+            this.showError('topAnimeSection', 'Network error occurred');
+        }
+    }
+
+    async loadUpcomingAnimeSection() {
+        try {
+            this.showLoadingState('upcomingAnimeSection');
+            const response = await fetch('/api/upcoming-anime');
+            const data = await response.json();
+
+            if (response.ok && data.data) {
+                this.displayCompactAnimeGrid('upcomingAnimeSection', data.data.slice(0, 8), 'Upcoming Anime');
+            } else {
+                this.showError('upcomingAnimeSection', 'Failed to load upcoming anime');
+            }
+        } catch (error) {
+            console.error('Error loading upcoming anime:', error);
+            this.showError('upcomingAnimeSection', 'Network error occurred');
+        }
+    }
+
+    showLoadingState(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        container.innerHTML = `
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Loading amazing anime content...</p>
+            </div>
+        `;
+    }
+
+    displayCompactAnimeGrid(containerId, animeList, title) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const html = `
+            <div class="anime-grid compact-grid">
+                ${animeList.map(anime => this.createAnimeCard(anime)).join('')}
+            </div>
+        `;
+
+        container.innerHTML = html;
+        this.setupAnimeCardEvents();
     }
 
     async loadCurrentSeason() {
