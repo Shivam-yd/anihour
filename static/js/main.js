@@ -349,21 +349,27 @@ class AnimeTracker {
         const rating = anime.score ? anime.score.toFixed(1) : 'N/A';
         const status = this.formatStatus(anime.status);
         
-        // Use attractive generated placeholders to avoid ad-blocker issues
-        const image = this.getAnimeSpecificPlaceholder(anime);
+        // Get the best available image URL
+        let imageUrl = '';
+        if (anime.images && anime.images.jpg) {
+            imageUrl = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
+        } else if (anime.image_url) {
+            imageUrl = anime.image_url;
+        }
+        
+        const placeholderImg = this.getPlaceholderImage();
         
         const synopsis = anime.synopsis ? this.truncateText(anime.synopsis, 150) : 'No synopsis available.';
-        const placeholderImg = this.getPlaceholderImage();
         
         return `
             <div class="anime-card" data-anime-id="${anime.mal_id}">
                 <div class="anime-card-image-container">
-                    <img src="${image}" 
+                    <img src="${placeholderImg}" 
                          alt="${anime.title}" 
                          class="anime-card-img" 
-                         loading="lazy"
-                         onerror="this.style.display='block'"
-                         onload="this.setAttribute('data-loaded', 'true');">
+                         data-original-url="${imageUrl}"
+                         data-anime-id="${anime.mal_id}"
+                         loading="lazy">
                     <div class="anime-card-overlay">
                         <i class="fas fa-play-circle"></i>
                     </div>
@@ -380,23 +386,50 @@ class AnimeTracker {
         `;
     }
 
-    getAnimeSpecificPlaceholder(anime) {
-        const colors = [
-            ['#ff6b9d', '#4ecdc4'], ['#667eea', '#764ba2'], ['#f093fb', '#f5576c'],
-            ['#4facfe', '#00f2fe'], ['#43e97b', '#38f9d7'], ['#fa709a', '#fee140'],
-            ['#a8edea', '#fed6e3'], ['#ff9a9e', '#fecfef'], ['#ffecd2', '#fcb69f']
-        ];
-        
-        const colorIndex = anime.mal_id % colors.length;
-        const [color1, color2] = colors[colorIndex];
-        const title = anime.title.length > 15 ? anime.title.substring(0, 12) + '...' : anime.title;
-        const rating = anime.score ? `★ ${anime.score.toFixed(1)}` : '★ N/A';
-        
-        return `data:image/svg+xml;charset=UTF-8,%3csvg width='300' height='400' xmlns='http://www.w3.org/2000/svg'%3e%3cdefs%3e%3clinearGradient id='grad${anime.mal_id}' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3e%3cstop offset='0%25' style='stop-color:${color1};stop-opacity:1' /%3e%3cstop offset='100%25' style='stop-color:${color2};stop-opacity:1' /%3e%3c/linearGradient%3e%3c/defs%3e%3crect width='300' height='400' fill='url(%23grad${anime.mal_id})'/%3e%3crect x='0' y='320' width='300' height='80' fill='rgba(0,0,0,0.7)'/%3e%3ctext x='50%25' y='50%25' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='white' text-anchor='middle' dy='.3em'%3e🎌%3c/text%3e%3ctext x='50%25' y='350' font-family='Arial, sans-serif' font-size='14' font-weight='bold' fill='white' text-anchor='middle'%3e${title}%3c/text%3e%3ctext x='50%25' y='375' font-family='Arial, sans-serif' font-size='12' fill='white' text-anchor='middle'%3e${rating}%3c/text%3e%3c/svg%3e`;
+    async loadImageWithFetch(imgElement) {
+        const originalUrl = imgElement.getAttribute('data-original-url');
+        if (!originalUrl) return;
+
+        try {
+            // First try direct loading
+            const testImg = new Image();
+            testImg.crossOrigin = 'anonymous';
+            
+            testImg.onload = () => {
+                imgElement.src = originalUrl;
+                imgElement.setAttribute('data-loaded', 'true');
+            };
+            
+            testImg.onerror = async () => {
+                // If direct loading fails, try with different referrer policy
+                try {
+                    const img = new Image();
+                    img.crossOrigin = 'anonymous';
+                    img.referrerPolicy = 'no-referrer';
+                    
+                    img.onload = () => {
+                        imgElement.src = originalUrl;
+                        imgElement.setAttribute('data-loaded', 'true');
+                    };
+                    
+                    img.onerror = () => {
+                        console.log('Could not load image:', originalUrl);
+                    };
+                    
+                    img.src = originalUrl;
+                } catch (error) {
+                    console.log('Error loading image:', error);
+                }
+            };
+            
+            testImg.src = originalUrl;
+        } catch (error) {
+            console.log('Error loading image:', error);
+        }
     }
 
     getPlaceholderImage() {
-        return this.getAnimeSpecificPlaceholder({mal_id: 0, title: 'Anime', score: null});
+        return `data:image/svg+xml;charset=UTF-8,%3csvg width='300' height='400' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='300' height='400' fill='%23f0f0f0'/%3e%3ctext x='50%25' y='50%25' font-family='Arial, sans-serif' font-size='16' fill='%23999' text-anchor='middle' dy='.3em'%3eLoading...%3c/text%3e%3c/svg%3e`;
     }
 
     displayAnimeDetails(containerId, anime, characters) {
@@ -405,8 +438,17 @@ class AnimeTracker {
 
         const rating = anime.score ? anime.score.toFixed(1) : 'N/A';
         
-        // Use generated placeholder for details page too
-        const image = this.getAnimeSpecificPlaceholder(anime);
+        // Use actual image for details page
+        let image = '';
+        if (anime.images && anime.images.jpg) {
+            image = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
+        } else if (anime.image_url) {
+            image = anime.image_url;
+        }
+        
+        if (!image) {
+            image = this.getPlaceholderImage();
+        }
         
         const synopsis = anime.synopsis || 'No synopsis available.';
         const genres = anime.genres ? anime.genres.map(g => g.name).join(', ') : 'Unknown';
@@ -500,22 +542,10 @@ class AnimeTracker {
             });
         });
 
-        // Setup image error handling
-        const images = document.querySelectorAll('.anime-card-img');
+        // Load actual anime images using fetch to bypass ad blockers
+        const images = document.querySelectorAll('.anime-card-img[data-original-url]');
         images.forEach(img => {
-            if (!img.handleImageError) {
-                img.handleImageError = function() {
-                    const fallback = this.getAttribute('data-fallback');
-                    const placeholder = this.getAttribute('data-placeholder');
-                    
-                    if (fallback && this.src !== fallback) {
-                        this.src = fallback;
-                    } else if (placeholder && this.src !== placeholder) {
-                        this.src = placeholder;
-                        this.onerror = null;
-                    }
-                };
-            }
+            this.loadImageWithFetch(img);
         });
     }
 
