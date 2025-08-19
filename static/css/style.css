@@ -492,8 +492,8 @@ body::before {
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .hero-section {
-        padding: 120px 0 80px;
-        min-height: 500px;
+        padding: 100px 0 40px;
+        min-height: 450px;
     }
     
     .hero-title {
@@ -519,6 +519,11 @@ body::before {
     
     .hero-icon {
         font-size: 3.5rem;
+    }
+    
+    .stats-section {
+        padding: 30px 0;
+        margin-top: -10px;
     }
 }
 
@@ -567,10 +572,11 @@ body::before {
 
 /* Stats Section */
 .stats-section {
-    padding: 80px 0;
+    padding: 40px 0;
     background: rgba(255, 255, 255, 0.02);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: -20px;
 }
 
 .stat-card {
