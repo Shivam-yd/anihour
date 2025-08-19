@@ -7,6 +7,7 @@
     <meta name="description" content="Explore current season anime, top-rated series, and upcoming releases all in one place.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="static/css/style.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #667eea;
@@ -240,12 +241,18 @@
             }
 
             async init() {
-                await Promise.all([
-                    this.loadHeroImages(),
-                    this.loadCurrentSeason(),
-                    this.loadTopAnime(),
-                    this.loadUpcoming()
-                ]);
+                // Load data sequentially with delays to respect API rate limits
+                await this.loadHeroImages();
+                await this.delay(1000);
+                await this.loadCurrentSeason();
+                await this.delay(1000);
+                await this.loadTopAnime();
+                await this.delay(1000);
+                await this.loadUpcoming();
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
             }
 
             async fetchWithCache(endpoint) {
@@ -260,7 +267,13 @@
                 }
 
                 try {
-                    const response = await fetch(`${this.baseURL}${endpoint}`);
+                    const response = await fetch(`${this.baseURL}${endpoint}`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                        },
+                        mode: 'cors'
+                    });
                     if (!response.ok) throw new Error(`HTTP ${response.status}`);
                     const data = await response.json();
                     
@@ -306,7 +319,7 @@
             }
 
             async loadCurrentSeason() {
-                const data = await this.fetchWithCache('/seasons/now');
+                const data = await this.fetchWithCache('/seasons/now?limit=20');
                 this.displayAnime(data.data || [], 'currentSeason');
             }
 
@@ -316,7 +329,7 @@
             }
 
             async loadUpcoming() {
-                const data = await this.fetchWithCache('/seasons/upcoming');
+                const data = await this.fetchWithCache('/seasons/upcoming?limit=20');
                 this.displayAnime(data.data || [], 'upcoming');
             }
 
