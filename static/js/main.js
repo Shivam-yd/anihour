@@ -585,11 +585,4 @@ document.addEventListener('DOMContentLoaded', () => {
     new AnimeTracker();
 });
 
-// Service Worker for offline capabilities (optional)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/static/sw.js')
-            .then(registration => console.log('SW registered'))
-            .catch(error => console.log('SW registration failed'));
-    });
-}
+// Service Worker removed to prevent errors
