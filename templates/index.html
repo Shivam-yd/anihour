@@ -159,12 +159,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     async function loadHeroSlideshow() {
         try {
+            console.log('Loading hero slideshow images...');
             const response = await fetch('/api/hero-slideshow-images');
             const data = await response.json();
             
+            console.log('Slideshow API response:', data);
+            
             if (data.images && data.images.length > 0) {
                 slideshowImages = data.images;
+                console.log(`Found ${slideshowImages.length} images for slideshow`);
                 initializeSlideshow();
+            } else {
+                console.warn('No slideshow images found');
             }
         } catch (error) {
             console.error('Error loading slideshow images:', error);
@@ -173,7 +179,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function initializeSlideshow() {
         const slideshowContainer = document.getElementById('heroSlideshow');
-        if (!slideshowContainer) return;
+        if (!slideshowContainer) {
+            console.error('Slideshow container not found');
+            return;
+        }
+        
+        console.log('Initializing slideshow with container:', slideshowContainer);
         
         // Create image elements
         slideshowImages.forEach((imageData, index) => {
@@ -181,26 +192,50 @@ document.addEventListener('DOMContentLoaded', function() {
             img.src = `/api/image-proxy?url=${encodeURIComponent(imageData.image_url)}`;
             img.alt = imageData.title;
             img.className = `hero-slideshow-image${index === 0 ? ' active' : ''}`;
-            img.loading = 'lazy';
+            img.loading = 'eager'; // Load first few images immediately
+            
+            console.log(`Creating slideshow image ${index + 1}:`, imageData.title, img.src);
+            
+            // Handle image load success
+            img.onload = function() {
+                console.log('Slideshow image loaded successfully:', imageData.title);
+                this.style.display = 'block';
+            };
             
             // Handle image load errors
             img.onerror = function() {
-                console.error('Failed to load slideshow image:', imageData.title);
-                this.remove();
+                console.error('Failed to load slideshow image:', imageData.title, this.src);
+                // Try direct URL as fallback
+                if (!this.src.includes('api/image-proxy')) {
+                    console.log('Trying direct image URL as fallback');
+                    this.src = imageData.image_url;
+                } else {
+                    this.remove();
+                }
             };
             
             slideshowContainer.appendChild(img);
         });
         
+        console.log(`Added ${slideshowImages.length} images to slideshow`);
+        
         // Start slideshow if we have images
         if (slideshowImages.length > 1) {
-            setInterval(nextSlide, 4000); // Change image every 4 seconds
+            console.log('Starting slideshow timer');
+            setInterval(nextSlide, 5000); // Change image every 5 seconds
+        } else if (slideshowImages.length === 1) {
+            console.log('Single image slideshow initialized');
         }
     }
     
     function nextSlide() {
         const images = document.querySelectorAll('.hero-slideshow-image');
-        if (images.length === 0) return;
+        if (images.length === 0) {
+            console.warn('No slideshow images found for transition');
+            return;
+        }
+        
+        console.log(`Transitioning from slide ${currentSlideIndex} to next slide`);
         
         // Remove active class from current image
         images[currentSlideIndex].classList.remove('active');
@@ -210,6 +245,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Add active class to new image
         images[currentSlideIndex].classList.add('active');
+        
+        console.log(`Now showing slide ${currentSlideIndex}: ${images[currentSlideIndex].alt}`);
     }
     
     // Load slideshow immediately
