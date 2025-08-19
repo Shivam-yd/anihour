@@ -273,11 +273,41 @@ body::before {
     -webkit-text-fill-color: transparent;
     position: relative;
     animation: gradientShift 3s ease-in-out infinite alternate;
+    /* Fallback for better visibility */
+    color: #ff6b9d;
+    display: inline-block;
+}
+
+/* Ensure fallback color shows when gradient clipping fails */
+.brand-highlight::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #ff6b9d;
+    z-index: -1;
+    opacity: 0;
+}
+
+@supports not (-webkit-background-clip: text) {
+    .brand-highlight {
+        color: #ff6b9d !important;
+        -webkit-text-fill-color: #ff6b9d !important;
+        background: none !important;
+    }
 }
 
 @keyframes gradientShift {
-    0% { background: linear-gradient(135deg, #ff6b9d 0%, #4ecdc4 50%, #45b7d1 100%); }
-    100% { background: linear-gradient(135deg, #45b7d1 0%, #ff6b9d 50%, #4ecdc4 100%); }
+    0% { 
+        background: linear-gradient(135deg, #ff6b9d 0%, #4ecdc4 50%, #45b7d1 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
+    100% { 
+        background: linear-gradient(135deg, #45b7d1 0%, #ff6b9d 50%, #4ecdc4 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
 }
 
 .hero-subtitle {
@@ -755,7 +785,7 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
     opacity: 0;
     transition: all 0.4s ease;
     border-radius: 50px;
@@ -763,14 +793,15 @@ body::before {
 }
 
 .btn-outline-light:hover {
-    border-color: rgba(255, 255, 255, 0.4);
-    color: white;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    color: rgba(224, 230, 237, 0.95) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
     transform: translateY(-3px) scale(1.02);
     box-shadow: 0 12px 35px rgba(255, 255, 255, 0.15);
 }
 
 .btn-outline-light:hover::before {
-    opacity: 1;
+    opacity: 0.5;
 }
 
 .btn-outline-light i,
