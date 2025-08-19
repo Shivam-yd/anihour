@@ -2,7 +2,15 @@
 
 ## Overview
 
-Anihour is a colorful and professional anime tracking web application built with minimal Python Flask backend and vanilla JavaScript frontend. It serves as a comprehensive anime discovery platform that fetches real-time data from the Jikan API (MyAnimeList's public API) to display current season anime, top-rated series, upcoming releases, and anime news. The application features a vibrant, responsive interface with anime-inspired gradients, smooth animations, and professional styling, offering an engaging experience for anime enthusiasts to discover their favorite shows.
+Anihour is a colorful and professional anime tracking web application built as a static frontend application with vanilla JavaScript. It serves as a comprehensive anime discovery platform that fetches real-time data directly from the Jikan API (MyAnimeList's public API) to display current season anime, top-rated series, upcoming releases, and anime news. The application features a vibrant, responsive interface with anime-inspired gradients, smooth animations, and professional styling, offering an engaging experience for anime enthusiasts to discover their favorite shows.
+
+## Recent Changes (August 19, 2025)
+
+✓ **Architecture Migration**: Converted from Python Flask backend to static HTML + JavaScript approach
+✓ **Simplified Deployment**: Eliminated server-side dependencies for easier hosting
+✓ **Maintained Functionality**: All features (slideshow, current season, top anime, upcoming) preserved
+✓ **Direct API Integration**: JavaScript now fetches directly from Jikan API with caching
+✓ **Universal Hosting**: Can now deploy on any static hosting service (GitHub Pages, Netlify, cPanel, etc.)
 
 ## User Preferences
 
@@ -11,7 +19,7 @@ Preferred communication style: Simple, everyday language.
 ## System Architecture
 
 ### Frontend Architecture
-- **Template Engine**: Jinja2 templating with Flask for server-side rendering
+- **Static HTML**: Single-page application using pure HTML5
 - **CSS Framework**: Bootstrap 5 for responsive grid system and components
 - **Styling Approach**: Custom CSS with CSS variables for theming, featuring anime-inspired gradients and dark theme
 - **JavaScript**: Vanilla JavaScript with class-based architecture for client-side functionality
@@ -19,16 +27,16 @@ Preferred communication style: Simple, everyday language.
 - **Responsive Design**: Mobile-first approach with Bootstrap's responsive utilities
 
 ### Backend Architecture
-- **Web Framework**: Flask with CORS support for cross-origin requests
-- **API Integration**: RESTful integration with Jikan API v4 for anime data
+- **Static Serving**: Simple Python HTTP server for development (production uses static hosting)
+- **API Integration**: Direct client-side integration with Jikan API v4 for anime data
 - **Error Handling**: Comprehensive exception handling for API requests with timeout configuration
-- **Logging**: Python's logging module configured for debugging
-- **Session Management**: Flask's built-in session handling with configurable secret key
+- **Caching**: Client-side caching with Map-based storage and TTL expiration
+- **No Server Dependencies**: Fully static application that runs entirely in the browser
 
 ### Data Management
 - **Data Source**: External API dependency on Jikan (MyAnimeList public API)
-- **Caching Strategy**: No persistent data storage - real-time API fetching
-- **Data Flow**: Client → Flask routes → Jikan API → JSON responses → Template rendering
+- **Caching Strategy**: Client-side Map-based caching with 5-minute TTL
+- **Data Flow**: Client JavaScript → Jikan API → JSON responses → DOM manipulation
 
 ### Application Structure
 - **Routing**: Modular route handlers for different anime categories (current, top, upcoming, news, details)
