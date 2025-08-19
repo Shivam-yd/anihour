@@ -5,6 +5,10 @@
 {% block content %}
 <!-- Hero Section -->
 <div class="hero-section">
+    <!-- Background Slideshow -->
+    <div class="hero-slideshow" id="heroSlideshow">
+        <!-- Images will be loaded dynamically -->
+    </div>
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 col-md-12">
@@ -149,6 +153,108 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Hero Background Slideshow
+    let slideshowImages = [];
+    let currentSlideIndex = 0;
+    
+    async function loadHeroSlideshow() {
+        try {
+            console.log('Loading hero slideshow images...');
+            const response = await fetch('/api/hero-slideshow-images');
+            const data = await response.json();
+            
+            console.log('Slideshow API response:', data);
+            
+            if (data.images && data.images.length > 0) {
+                slideshowImages = data.images;
+                console.log(`Found ${slideshowImages.length} images for slideshow`);
+                initializeSlideshow();
+            } else {
+                console.warn('No slideshow images found');
+            }
+        } catch (error) {
+            console.error('Error loading slideshow images:', error);
+        }
+    }
+    
+    function initializeSlideshow() {
+        const slideshowContainer = document.getElementById('heroSlideshow');
+        
+        if (!slideshowContainer) {
+            console.error('Slideshow container not found');
+            return;
+        }
+        
+        console.log('Initializing professional slideshow');
+        
+        // Create image elements and indicators
+        slideshowImages.forEach((imageData, index) => {
+            // Create image
+            const img = document.createElement('img');
+            img.src = `/api/image-proxy?url=${encodeURIComponent(imageData.image_url)}`;
+            img.alt = imageData.title;
+            img.className = `hero-slideshow-image${index === 0 ? ' active' : ''}`;
+            img.loading = index < 3 ? 'eager' : 'lazy';
+            img.dataset.slideIndex = index;
+            
+            // Handle image load
+            img.onload = function() {
+                console.log(`Slideshow image ${index + 1} loaded:`, imageData.title);
+            };
+            
+            img.onerror = function() {
+                console.error('Failed to load slideshow image:', imageData.title);
+                this.remove();
+            };
+            
+            slideshowContainer.appendChild(img);
+        });
+        
+        console.log(`Initialized slideshow with ${slideshowImages.length} images`);
+        
+        // Start auto slideshow
+        if (slideshowImages.length > 1) {
+            startAutoSlide();
+        }
+    }
+    
+    let autoSlideInterval;
+    
+    function goToSlide(index) {
+        const images = document.querySelectorAll('.hero-slideshow-image');
+        
+        if (images.length === 0 || index >= images.length) return;
+        
+        // Remove active class from current slide
+        images[currentSlideIndex]?.classList.remove('active');
+        
+        // Set new active slide
+        currentSlideIndex = index;
+        images[currentSlideIndex].classList.add('active');
+        
+        // Restart auto slide timer
+        restartAutoSlide();
+    }
+    
+    function nextSlide() {
+        goToSlide((currentSlideIndex + 1) % slideshowImages.length);
+    }
+    
+    function startAutoSlide() {
+        autoSlideInterval = setInterval(nextSlide, 6000); // 6 seconds per slide
+        console.log('Auto slideshow started');
+    }
+    
+    function restartAutoSlide() {
+        if (autoSlideInterval) {
+            clearInterval(autoSlideInterval);
+            startAutoSlide();
+        }
+    }
+    
+    // Load slideshow immediately
+    loadHeroSlideshow();
+
     // Enhanced animations for the new homepage design
     
     // Animate stat cards on scroll

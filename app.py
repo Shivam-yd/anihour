@@ -126,6 +126,37 @@ def api_news():
         return jsonify({'data': news_data})
     return jsonify({'error': 'Failed to fetch anime news'}), 500
 
+@app.route('/api/hero-slideshow-images')
+def api_hero_slideshow_images():
+    """API endpoint for hero section slideshow images"""
+    # Get both current season and top anime for variety
+    current_season = fetch_from_jikan('/seasons/now')
+    top_anime = fetch_from_jikan('/top/anime?type=tv&limit=15')
+    
+    images = []
+    
+    if current_season and current_season.get('data'):
+        # Get images from current season anime (first 8)
+        for anime in current_season['data'][:8]:
+            if anime.get('images', {}).get('jpg', {}).get('large_image_url'):
+                images.append({
+                    'title': anime.get('title', ''),
+                    'image_url': anime['images']['jpg']['large_image_url'],
+                    'type': 'current'
+                })
+    
+    if top_anime and top_anime.get('data'):
+        # Get images from top anime (first 7)
+        for anime in top_anime['data'][:7]:
+            if anime.get('images', {}).get('jpg', {}).get('large_image_url'):
+                images.append({
+                    'title': anime.get('title', ''),
+                    'image_url': anime['images']['jpg']['large_image_url'],
+                    'type': 'top'
+                })
+    
+    return jsonify({'images': images})
+
 @app.route('/api/image-proxy')
 def image_proxy():
     """Proxy images to avoid CORS and ad-blocker issues"""

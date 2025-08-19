@@ -359,6 +359,10 @@ class AnimeTracker {
         const rating = anime.score ? anime.score.toFixed(1) : 'N/A';
         const status = this.formatStatus(anime.status);
         
+        // Extract studio information
+        const studio = anime.studios && anime.studios.length > 0 ? anime.studios[0].name : 
+                      (anime.producers && anime.producers.length > 0 ? anime.producers[0].name : '');
+        
         // More robust image URL handling with proxy
         let image = '';
         if (anime.images && anime.images.jpg) {
@@ -393,8 +397,9 @@ class AnimeTracker {
                          alt="${anime.title}" 
                          class="anime-card-img" 
                          loading="lazy"
-                         onerror="console.error('Image failed to load:', '${image}'); this.src='${placeholderImg}'; this.onerror=null; this.setAttribute('data-loaded', 'true');"
-                         onload="console.log('Image loaded:', '${anime.title}'); this.setAttribute('data-loaded', 'true');">
+                         onerror="console.error('Image failed to load:', this.src); this.src='${placeholderImg}'; this.onerror=null; this.setAttribute('data-loaded', 'true'); this.parentElement.classList.add('loaded');"
+                         onload="console.log('Image loaded:', this.alt); this.setAttribute('data-loaded', 'true'); this.parentElement.classList.add('loaded');">
+                    ${studio ? `<div class="anime-studio">${studio}</div>` : ''}
                     <div class="anime-card-overlay">
                         <i class="fas fa-play-circle"></i>
                     </div>
