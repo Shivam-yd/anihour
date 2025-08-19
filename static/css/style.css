@@ -508,7 +508,8 @@ body::before {
     background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(78, 205, 196, 0.1));
 }
 
-.anime-card-image-container::before {
+/* Loading spinner for image loading - only show when image is not loaded */
+.anime-card-image-container:not(.loaded)::before {
     content: '';
     position: absolute;
     top: 50%;
@@ -523,18 +524,8 @@ body::before {
     z-index: 1;
 }
 
-/* Hide loading spinner when image is loaded */
-.anime-card-img[data-loaded="true"] ~ .loading-spinner,
-.anime-card-image-container .loading-spinner {
-    display: none;
-}
-
 .anime-card-img[data-loaded="true"] {
     opacity: 1;
-}
-
-.anime-card-img:not([data-loaded]) {
-    opacity: 0;
 }
 
 .anime-card-img {

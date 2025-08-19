@@ -393,8 +393,8 @@ class AnimeTracker {
                          alt="${anime.title}" 
                          class="anime-card-img" 
                          loading="lazy"
-                         onerror="console.error('Image failed to load:', '${image}'); this.src='${placeholderImg}'; this.onerror=null; this.setAttribute('data-loaded', 'true');"
-                         onload="console.log('Image loaded:', '${anime.title}'); this.setAttribute('data-loaded', 'true');">
+                         onerror="console.error('Image failed to load:', this.src); this.src='${placeholderImg}'; this.onerror=null; this.setAttribute('data-loaded', 'true'); this.parentElement.classList.add('loaded');"
+                         onload="console.log('Image loaded:', this.alt); this.setAttribute('data-loaded', 'true'); this.parentElement.classList.add('loaded');">
                     <div class="anime-card-overlay">
                         <i class="fas fa-play-circle"></i>
                     </div>
