@@ -166,9 +166,13 @@ class AnimeTracker {
             const response = await fetch('/api/current-season');
             const data = await response.json();
 
+            console.log('Current season API response:', data);
+
             if (response.ok && data.data) {
+                console.log('Displaying', data.data.length, 'anime');
                 this.displayCompactAnimeGrid('currentSeasonAnime', data.data.slice(0, 8), 'Current Season');
             } else {
+                console.error('API response not ok:', response.status, data);
                 this.showError('currentSeasonAnime', 'Failed to load current season anime');
             }
         } catch (error) {
@@ -357,6 +361,8 @@ class AnimeTracker {
             image = anime.image_url;
         }
         
+        console.log('Creating card for:', anime.title, 'Image URL:', image);
+        
         // Use placeholder if no valid image found
         if (!image) {
             image = this.getPlaceholderImage();
@@ -372,8 +378,8 @@ class AnimeTracker {
                          alt="${anime.title}" 
                          class="anime-card-img" 
                          loading="lazy"
-                         onerror="this.src='${placeholderImg}'; this.onerror=null;"
-                         onload="this.setAttribute('data-loaded', 'true');">
+                         onerror="console.error('Image failed to load:', '${image}'); this.src='${placeholderImg}'; this.onerror=null;"
+                         onload="console.log('Image loaded:', '${anime.title}'); this.setAttribute('data-loaded', 'true');">
                     <div class="anime-card-overlay">
                         <i class="fas fa-play-circle"></i>
                     </div>
