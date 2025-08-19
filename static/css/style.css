@@ -721,7 +721,7 @@ body::before {
 .btn-primary:hover {
     transform: translateY(-3px) scale(1.02);
     box-shadow: 0 15px 40px rgba(255, 107, 157, 0.5);
-    color: white;
+    color: white !important;
 }
 
 .btn-primary:hover::before {
@@ -729,9 +729,11 @@ body::before {
 }
 
 .btn-primary i,
-.btn-primary span {
+.btn-primary span,
+.btn-primary * {
     position: relative;
     z-index: 1;
+    color: inherit !important;
 }
 
 .btn-outline-primary {
