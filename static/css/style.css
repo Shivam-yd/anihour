@@ -96,6 +96,30 @@ body::before {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+.navbar-logo {
+    font-size: 1.5rem;
+    display: inline-block;
+    animation: logoGlow 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(255, 107, 157, 0.6));
+    transition: all 0.3s ease;
+}
+
+.navbar-brand:hover .navbar-logo {
+    transform: scale(1.2) rotate(10deg);
+    filter: drop-shadow(0 0 15px rgba(255, 107, 157, 0.8));
+}
+
+@keyframes logoGlow {
+    0%, 100% { 
+        transform: scale(1);
+        filter: drop-shadow(0 0 8px rgba(255, 107, 157, 0.6));
+    }
+    50% { 
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 12px rgba(255, 107, 157, 0.8));
+    }
+}
+
 .navbar-nav .nav-link {
     color: var(--light-text) !important;
     font-weight: 500;
