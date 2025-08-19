@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Top Anime - Anime Tracker{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <h1 class="hero-title">
+            <i class="fas fa-trophy me-3"></i>
+            Top Rated Anime
+        </h1>
+        <p class="hero-subtitle">
+            Discover the highest-rated anime series of all time
+        </p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Filter Buttons -->
+    <div class="filter-buttons">
+        <button class="filter-btn active" data-type="tv">
+            <i class="fas fa-tv me-2"></i>TV Series
+        </button>
+        <button class="filter-btn" data-type="movie">
+            <i class="fas fa-film me-2"></i>Movies
+        </button>
+        <button class="filter-btn" data-type="ova">
+            <i class="fas fa-play-circle me-2"></i>OVA
+        </button>
+        <button class="filter-btn" data-type="special">
+            <i class="fas fa-star me-2"></i>Special
+        </button>
+    </div>
+    
+    <!-- Top Anime Content -->
+    <div id="topAnimeContent" class="mb-5">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading top anime...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Background Images -->
+<div class="position-fixed w-100 h-100" style="top: 0; left: 0; z-index: -2; opacity: 0.05;">
+    <div class="row h-100 g-0">
+        <div class="col-6">
+            <img src="https://pixabay.com/get/g2f586a5af34070d8066206eea7b79ed4fc15fe8553133c6f1afac50ec5c145998dd00a976e1e81569c9d94358bfbdcf63c67fc702f624cf05270a9a5e9fd7dc9_1280.jpg" 
+                 alt="" class="w-100 h-100" style="object-fit: cover;">
+        </div>
+        <div class="col-6">
+            <img src="https://pixabay.com/get/g9eee87f7545063d65ebf66b5cf02632f77635e9f20e94d711ff8800253c9248f9c0dba5a73fe29100c53bdfa79daab0d8ec3608f89df8421fc6ac1bdc5d359f1_1280.jpg" 
+                 alt="" class="w-100 h-100" style="object-fit: cover;">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Filter button functionality
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+            // Update active button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Get selected type
+            const selectedType = this.dataset.type;
+            
+            // Show loading
+            const container = document.getElementById('topAnimeContent');
+            container.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading ${selectedType.toUpperCase()} anime...</p>
+                </div>
+            `;
+            
+            // Fetch filtered data
+            try {
+                const response = await fetch(`/api/top-anime?type=${selectedType}`);
+                const data = await response.json();
+                
+                if (response.ok && data.data) {
+                    displayFilteredAnime(data.data, selectedType);
+                } else {
+                    showError('Failed to load filtered anime');
+                }
+            } catch (error) {
+                console.error('Filter error:', error);
+                showError('Network error occurred');
+            }
+        });
+    });
+    
+    function displayFilteredAnime(animeList, type) {
+        const container = document.getElementById('topAnimeContent');
+        const typeLabels = {
+            'tv': 'TV Series',
+            'movie': 'Movies',
+            'ova': 'OVA',
+            'special': 'Special'
+        };
+        
+        const html = `
+            <div class="section-header">
+                <h2 class="section-title">Top ${typeLabels[type]}</h2>
+                <p class="section-subtitle">Highest rated ${typeLabels[type].toLowerCase()}</p>
+            </div>
+            <div class="anime-grid">
+                ${animeList.map((anime, index) => createTopAnimeCard(anime, index + 1)).join('')}
+            </div>
+        `;
+        
+        container.innerHTML = html;
+        setupAnimeCardEvents();
+    }
+    
+    function createTopAnimeCard(anime, rank) {
+        const rating = anime.score ? anime.score.toFixed(1) : 'N/A';
+        const image = anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url || '';
+        const synopsis = anime.synopsis ? truncateText(anime.synopsis, 150) : 'No synopsis available.';
+        
+        return `
+            <div class="anime-card position-relative" data-anime-id="${anime.mal_id}">
+                <div class="position-absolute top-0 start-0 m-3 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                     style="width: 40px; height: 40px; font-weight: bold; z-index: 2;">
+                    #${rank}
+                </div>
+                <img src="${image}" alt="${anime.title}" class="anime-card-img" loading="lazy">
+                <div class="anime-card-body">
+                    <h3 class="anime-card-title">${anime.title}</h3>
+                    <div class="anime-card-info">
+                        <span class="anime-rating">★ ${rating}</span>
+                        <span class="badge bg-info">${anime.type || 'Unknown'}</span>
+                    </div>
+                    <p class="anime-synopsis">${synopsis}</p>
+                </div>
+            </div>
+        `;
+    }
+    
+    function setupAnimeCardEvents() {
+        const animeCards = document.querySelectorAll('.anime-card');
+        animeCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const animeId = card.dataset.animeId;
+                if (animeId) {
+                    window.location.href = `/anime/${animeId}`;
+                }
+            });
+        });
+    }
+    
+    function showError(message) {
+        const container = document.getElementById('topAnimeContent');
+        container.innerHTML = `
+            <div class="error-message">
+                <div class="error-title">Oops! Something went wrong</div>
+                <p>${message}</p>
+                <button class="btn btn-primary" onclick="location.reload()">Try Again</button>
+            </div>
+        `;
+    }
+    
+    function truncateText(text, length) {
+        if (!text) return '';
+        return text.length > length ? text.substring(0, length) + '...' : text;
+    }
+});
+</script>
+{% endblock %}

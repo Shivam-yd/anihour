@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Anime News - Anime Tracker{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <h1 class="hero-title">
+            <i class="fas fa-newspaper me-3"></i>
+            Latest Anime News
+        </h1>
+        <p class="hero-subtitle">
+            Stay updated with the latest happenings in the anime world
+        </p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- News Content -->
+    <div id="newsContent" class="mb-5">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading latest anime news...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Background Image -->
+<div class="position-fixed w-100 h-100" style="top: 0; left: 0; z-index: -2; opacity: 0.03;">
+    <img src="https://pixabay.com/get/g5f16076184d887df0d5c9738cb0326727108e9090f564eb0376f426023b3bb9dffecfb0b1c4160a4e3388aa00cc85b980e21e737b29c69663277f0370aff9c58_1280.jpg" 
+         alt="" class="w-100 h-100" style="object-fit: cover;">
+</div>
+
+<!-- News Categories -->
+<div class="container my-5">
+    <div class="row text-center">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="p-3 rounded-3" style="background: rgba(255, 107, 157, 0.1); border: 1px solid rgba(255, 107, 157, 0.3);">
+                <i class="fas fa-tv fa-2x mb-2" style="color: var(--primary-color);"></i>
+                <h6>Series Updates</h6>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="p-3 rounded-3" style="background: rgba(78, 205, 196, 0.1); border: 1px solid rgba(78, 205, 196, 0.3);">
+                <i class="fas fa-film fa-2x mb-2" style="color: var(--secondary-color);"></i>
+                <h6>Movie News</h6>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="p-3 rounded-3" style="background: rgba(69, 183, 209, 0.1); border: 1px solid rgba(69, 183, 209, 0.3);">
+                <i class="fas fa-users fa-2x mb-2" style="color: var(--accent-color);"></i>
+                <h6>Industry News</h6>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="p-3 rounded-3" style="background: rgba(255, 167, 38, 0.1); border: 1px solid rgba(255, 167, 38, 0.3);">
+                <i class="fas fa-calendar fa-2x mb-2" style="color: var(--warning-color);"></i>
+                <h6>Events</h6>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add staggered animation for news cards
+    const animateNewsCards = () => {
+        const cards = document.querySelectorAll('.news-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateX(-50px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.8s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateX(0)';
+            }, index * 150);
+        });
+    };
+    
+    // Listen for content updates to trigger animations
+    const newsContent = document.getElementById('newsContent');
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                const hasNewsCards = Array.from(mutation.addedNodes).some(node => 
+                    node.nodeType === Node.ELEMENT_NODE && node.querySelector('.news-card')
+                );
+                if (hasNewsCards) {
+                    setTimeout(animateNewsCards, 100);
+                }
+            }
+        });
+    });
+    
+    observer.observe(newsContent, { childList: true, subtree: true });
+    
+    // Add reading time estimation
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.news-card')) {
+            const newsCard = e.target.closest('.news-card');
+            const content = newsCard.querySelector('.news-content').textContent;
+            const words = content.split(' ').length;
+            const readingTime = Math.ceil(words / 200); // Average reading speed
+            
+            console.log(`Estimated reading time: ${readingTime} minute${readingTime > 1 ? 's' : ''}`);
+        }
+    });
+});
+</script>
+{% endblock %}

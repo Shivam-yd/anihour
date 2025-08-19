@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Upcoming Anime - Anime Tracker{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <h1 class="hero-title">
+            <i class="fas fa-clock me-3"></i>
+            Upcoming Anime
+        </h1>
+        <p class="hero-subtitle">
+            Get ready for the next big anime releases
+        </p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Upcoming Anime Content -->
+    <div id="upcomingAnimeContent" class="mb-5">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading upcoming anime...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Background Images -->
+<div class="position-fixed w-100 h-100" style="top: 0; left: 0; z-index: -2; opacity: 0.05;">
+    <div class="row h-100 g-0">
+        <div class="col-4">
+            <img src="https://pixabay.com/get/g0c8bef406b59fe364e3b17ac874bcddda33ce6073f0779ab54d3d2758067af4446bb5fc234b71a1d13e1afd071390b49104ba74c1dc005325bda16d77815e4ac_1280.jpg" 
+                 alt="" class="w-100 h-100" style="object-fit: cover;">
+        </div>
+        <div class="col-4">
+            <img src="https://pixabay.com/get/g2bf086abeeb365862ff27e5a64d10935f06dce1d44e8a554020835bb23da7d25be45949c48dfdd4169d8d4e19dce9a303852066f7a30fa84bfef1e4920914016_1280.jpg" 
+                 alt="" class="w-100 h-100" style="object-fit: cover;">
+        </div>
+        <div class="col-4">
+            <img src="https://pixabay.com/get/g86e3cc4417932e9380bc5896763d62c509c6d3d3be20537dd27991ceb273f747a4a1eb934f8dc1e27f30a8fa66089289f67003e97206276cd32cb0831a740b7e_1280.jpg" 
+                 alt="" class="w-100 h-100" style="object-fit: cover;">
+        </div>
+    </div>
+</div>
+
+<!-- Countdown Section -->
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="text-center p-4 rounded-4" style="background: rgba(255, 167, 38, 0.1); border: 1px solid rgba(255, 167, 38, 0.3);">
+                <i class="fas fa-calendar-alt fa-3x mb-3" style="color: var(--warning-color);"></i>
+                <h3>Next Season Countdown</h3>
+                <p class="mb-0">Stay tuned for exciting new anime releases!</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add some animations for upcoming anime cards
+    const animateCards = () => {
+        const cards = document.querySelectorAll('.anime-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    };
+    
+    // Override the main displayAnimeGrid function for this page
+    const originalLoad = window.AnimeTracker?.prototype?.loadUpcomingAnime;
+    if (originalLoad) {
+        setTimeout(animateCards, 500);
+    }
+    
+    // Add hover effects for upcoming anime
+    document.addEventListener('mouseenter', (e) => {
+        if (e.target.classList.contains('anime-card')) {
+            e.target.style.transform = 'translateY(-15px) scale(1.03)';
+        }
+    }, true);
+    
+    document.addEventListener('mouseleave', (e) => {
+        if (e.target.classList.contains('anime-card')) {
+            e.target.style.transform = 'translateY(0) scale(1)';
+        }
+    }, true);
+});
+</script>
+{% endblock %}
