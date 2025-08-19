@@ -166,13 +166,9 @@ class AnimeTracker {
             const response = await fetch('/api/current-season');
             const data = await response.json();
 
-            console.log('Current season API response:', data);
-
             if (response.ok && data.data) {
-                console.log('Displaying', data.data.length, 'anime');
                 this.displayCompactAnimeGrid('currentSeasonAnime', data.data.slice(0, 8), 'Current Season');
             } else {
-                console.error('API response not ok:', response.status, data);
                 this.showError('currentSeasonAnime', 'Failed to load current season anime');
             }
         } catch (error) {
@@ -353,29 +349,22 @@ class AnimeTracker {
         const rating = anime.score ? anime.score.toFixed(1) : 'N/A';
         const status = this.formatStatus(anime.status);
         
-        // More robust image URL handling with proxy
-        let image = '';
-        if (anime.images && anime.images.jpg) {
-            const originalImage = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
-            if (originalImage && originalImage.startsWith('https://cdn.myanimelist.net/')) {
-                image = `/api/image-proxy?url=${encodeURIComponent(originalImage)}`;
-            } else {
-                image = originalImage;
+        // Use WebP images first (less likely to be blocked), with fallback chain
+        let primaryImage = '';
+        let fallbackImage = '';
+        
+        if (anime.images) {
+            if (anime.images.webp) {
+                primaryImage = anime.images.webp.large_image_url || anime.images.webp.image_url || anime.images.webp.small_image_url;
+            }
+            if (anime.images.jpg) {
+                fallbackImage = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
             }
         } else if (anime.image_url) {
-            if (anime.image_url.startsWith('https://cdn.myanimelist.net/')) {
-                image = `/api/image-proxy?url=${encodeURIComponent(anime.image_url)}`;
-            } else {
-                image = anime.image_url;
-            }
+            fallbackImage = anime.image_url;
         }
         
-        console.log('Creating card for:', anime.title, 'Proxied Image URL:', image);
-        
-        // Use placeholder if no valid image found
-        if (!image) {
-            image = this.getPlaceholderImage();
-        }
+        const image = primaryImage || fallbackImage || this.getPlaceholderImage();
         
         const synopsis = anime.synopsis ? this.truncateText(anime.synopsis, 150) : 'No synopsis available.';
         const placeholderImg = this.getPlaceholderImage();
@@ -387,8 +376,10 @@ class AnimeTracker {
                          alt="${anime.title}" 
                          class="anime-card-img" 
                          loading="lazy"
-                         onerror="console.error('Image failed to load:', '${image}'); this.src='${placeholderImg}'; this.onerror=null;"
-                         onload="console.log('Image loaded:', '${anime.title}'); this.setAttribute('data-loaded', 'true');">
+                         data-fallback="${fallbackImage || placeholderImg}"
+                         data-placeholder="${placeholderImg}"
+                         onerror="this.handleImageError()"
+                         onload="this.setAttribute('data-loaded', 'true');">
                     <div class="anime-card-overlay">
                         <i class="fas fa-play-circle"></i>
                     </div>
@@ -416,21 +407,17 @@ class AnimeTracker {
 
         const rating = anime.score ? anime.score.toFixed(1) : 'N/A';
         
-        // Better image handling for details page with proxy
+        // Better image handling for details page - WebP first
         let image = '';
-        if (anime.images && anime.images.jpg) {
-            const originalImage = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
-            if (originalImage && originalImage.startsWith('https://cdn.myanimelist.net/')) {
-                image = `/api/image-proxy?url=${encodeURIComponent(originalImage)}`;
-            } else {
-                image = originalImage;
+        if (anime.images) {
+            if (anime.images.webp) {
+                image = anime.images.webp.large_image_url || anime.images.webp.image_url || anime.images.webp.small_image_url;
+            }
+            if (!image && anime.images.jpg) {
+                image = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
             }
         } else if (anime.image_url) {
-            if (anime.image_url.startsWith('https://cdn.myanimelist.net/')) {
-                image = `/api/image-proxy?url=${encodeURIComponent(anime.image_url)}`;
-            } else {
-                image = anime.image_url;
-            }
+            image = anime.image_url;
         }
         
         if (!image) {
@@ -527,6 +514,24 @@ class AnimeTracker {
                     window.location.href = `/anime/${animeId}`;
                 }
             });
+        });
+
+        // Setup image error handling
+        const images = document.querySelectorAll('.anime-card-img');
+        images.forEach(img => {
+            if (!img.handleImageError) {
+                img.handleImageError = function() {
+                    const fallback = this.getAttribute('data-fallback');
+                    const placeholder = this.getAttribute('data-placeholder');
+                    
+                    if (fallback && this.src !== fallback) {
+                        this.src = fallback;
+                    } else if (placeholder && this.src !== placeholder) {
+                        this.src = placeholder;
+                        this.onerror = null;
+                    }
+                };
+            }
         });
     }
 
