@@ -174,11 +174,11 @@ body::before {
 
 /* Hero Section */
 .hero-section {
-    padding: 140px 0 100px;
+    padding: 120px 0 60px;
     position: relative;
     overflow: hidden;
     background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.9) 100%);
-    min-height: 600px;
+    min-height: 500px;
     display: flex;
     align-items: center;
 }
