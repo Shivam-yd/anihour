@@ -5,6 +5,10 @@
 {% block content %}
 <!-- Hero Section -->
 <div class="hero-section">
+    <!-- Background Slideshow -->
+    <div class="hero-slideshow" id="heroSlideshow">
+        <!-- Images will be loaded dynamically -->
+    </div>
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 col-md-12">
@@ -149,6 +153,68 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Hero Background Slideshow
+    let slideshowImages = [];
+    let currentSlideIndex = 0;
+    
+    async function loadHeroSlideshow() {
+        try {
+            const response = await fetch('/api/hero-slideshow-images');
+            const data = await response.json();
+            
+            if (data.images && data.images.length > 0) {
+                slideshowImages = data.images;
+                initializeSlideshow();
+            }
+        } catch (error) {
+            console.error('Error loading slideshow images:', error);
+        }
+    }
+    
+    function initializeSlideshow() {
+        const slideshowContainer = document.getElementById('heroSlideshow');
+        if (!slideshowContainer) return;
+        
+        // Create image elements
+        slideshowImages.forEach((imageData, index) => {
+            const img = document.createElement('img');
+            img.src = `/api/image-proxy?url=${encodeURIComponent(imageData.image_url)}`;
+            img.alt = imageData.title;
+            img.className = `hero-slideshow-image${index === 0 ? ' active' : ''}`;
+            img.loading = 'lazy';
+            
+            // Handle image load errors
+            img.onerror = function() {
+                console.error('Failed to load slideshow image:', imageData.title);
+                this.remove();
+            };
+            
+            slideshowContainer.appendChild(img);
+        });
+        
+        // Start slideshow if we have images
+        if (slideshowImages.length > 1) {
+            setInterval(nextSlide, 4000); // Change image every 4 seconds
+        }
+    }
+    
+    function nextSlide() {
+        const images = document.querySelectorAll('.hero-slideshow-image');
+        if (images.length === 0) return;
+        
+        // Remove active class from current image
+        images[currentSlideIndex].classList.remove('active');
+        
+        // Move to next image
+        currentSlideIndex = (currentSlideIndex + 1) % images.length;
+        
+        // Add active class to new image
+        images[currentSlideIndex].classList.add('active');
+    }
+    
+    // Load slideshow immediately
+    loadHeroSlideshow();
+
     // Enhanced animations for the new homepage design
     
     // Animate stat cards on scroll
