@@ -203,8 +203,19 @@ def image_proxy():
     
     # Check cache first for images (longer cache duration)
     if cache_key in cache:
-        cached_data, timestamp = cache[cache_key]
-        if current_time - timestamp < 1800:  # 30 minutes for images
+        cached_entry = cache[cache_key]
+        # Handle both old and new cache formats
+        if isinstance(cached_entry, tuple) and len(cached_entry) == 2:
+            cached_data, timestamp = cached_entry
+        elif isinstance(cached_entry, dict):
+            cached_data = cached_entry
+            timestamp = cached_entry.get('timestamp', 0)
+        else:
+            # Invalid cache entry, skip it
+            cached_data = None
+            timestamp = 0
+        
+        if cached_data and current_time - timestamp < 1800:  # 30 minutes for images
             return Response(
                 cached_data['content'],
                 content_type=cached_data['content_type'],
