@@ -57,8 +57,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const initialType = urlParams.get('type') || 'tv';
     
-    console.log('URL params:', window.location.search);
-    console.log('Initial type:', initialType);
     
     // Set active button based on URL parameter
     setActiveButton(initialType);
@@ -140,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Use placeholder if no valid image found
         if (!image) {
-            image = `data:image/svg+xml;charset=UTF-8,%3csvg width='300' height='400' xmlns='http://www.w3.org/2000/svg'%3e%3cdefs%3e%3clinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3e%3cstop offset='0%25' style='stop-color:%23ff6b9d;stop-opacity:1' /%3e%3cstop offset='100%25' style='stop-color:%234ecdc4;stop-opacity:1' /%3e%3c/linearGradient%3e%3c/defs%3e%3crect width='300' height='400' fill='url(%23grad)'/%3e%3ctext x='50%25' y='50%25' font-family='Arial, sans-serif' font-size='18' fill='white' text-anchor='middle' dy='.3em'%3eAnime Image%3c/text%3e%3c/svg%3e`;
+            image = `data:image/svg+xml;charset=UTF-8,%3csvg width='300' height='400' xmlns='http://www.w3.org/2000/svg'%3e%3cdefs%3e%3clinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3e%3cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3e%3cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3e%3c/linearGradient%3e%3c/defs%3e%3crect width='300' height='400' fill='url(%23grad)'/%3e%3ctext x='50%25' y='45%25' font-family='Arial, sans-serif' font-size='16' fill='white' text-anchor='middle' dy='.3em'%3e📺%3c/text%3e%3ctext x='50%25' y='60%25' font-family='Arial, sans-serif' font-size='12' fill='white' text-anchor='middle' dy='.3em'%3eAnime Image%3c/text%3e%3c/svg%3e`;
         }
         
         const synopsis = anime.synopsis ? truncateText(anime.synopsis, 150) : 'No synopsis available.';
@@ -156,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
                          alt="${anime.title}" 
                          class="anime-card-img" 
                          loading="lazy"
-                         onerror="console.error('Top anime image failed to load:', this.src); this.onerror=null; this.setAttribute('data-loaded', 'true'); this.style.opacity='1'; this.parentElement.classList.add('loaded');"
+                         onerror="console.error('Top anime image failed to load:', this.src); this.src='data:image/svg+xml;charset=UTF-8,%3csvg width=\\'300\\' height=\\'400\\' xmlns=\\'http://www.w3.org/2000/svg\\'%3e%3cdefs%3e%3clinearGradient id=\\'grad\\' x1=\\'0%25\\' y1=\\'0%25\\' x2=\\'100%25\\' y2=\\'100%25\\'%3e%3cstop offset=\\'0%25\\' style=\\'stop-color:%23667eea;stop-opacity:1\\' /%3e%3cstop offset=\\'100%25\\' style=\\'stop-color:%23764ba2;stop-opacity:1\\' /%3e%3c/linearGradient%3e%3c/defs%3e%3crect width=\\'300\\' height=\\'400\\' fill=\\'url(%23grad)\\'/%3e%3ctext x=\\'50%25\\' y=\\'45%25\\' font-family=\\'Arial, sans-serif\\' font-size=\\'16\\' fill=\\'white\\' text-anchor=\\'middle\\' dy=\\'.3em\\'%3e📺%3c/text%3e%3ctext x=\\'50%25\\' y=\\'60%25\\' font-family=\\'Arial, sans-serif\\' font-size=\\'12\\' fill=\\'white\\' text-anchor=\\'middle\\' dy=\\'.3em\\'%3eImage Not Found%3c/text%3e%3c/svg%3e'; this.onerror=null; this.setAttribute('data-loaded', 'true'); this.style.opacity='1'; this.parentElement.classList.add('loaded');"
                          onload="console.log('Top anime image loaded:', this.alt); this.setAttribute('data-loaded', 'true'); this.style.opacity='1'; this.parentElement.classList.add('loaded');">
                     <div class="anime-card-overlay">
                         <i class="fas fa-play-circle"></i>
