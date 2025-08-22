@@ -1626,6 +1626,36 @@ body::before {
     align-items: center;
 }
 
+/* Mobile Ad Container */
+.mobile-ad-container {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* Hide mobile ads on desktop, show on mobile */
+@media (min-width: 769px) {
+    .mobile-ad-container {
+        display: none;
+    }
+}
+
+/* Show mobile ads only on mobile devices */
+@media (max-width: 768px) {
+    .mobile-ad-container {
+        display: flex;
+        margin-top: 10px;
+    }
+    
+    /* Stack ads vertically on mobile */
+    .ad-banner-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .ad-banner-section {
