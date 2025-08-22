@@ -1,6 +1,39 @@
 {% extends "base.html" %}
 
-{% block title %}Anihour - Current Season Anime{% endblock %}
+{% block title %}Anihour - Current Season Anime 2025 | Top Anime Tracker & Database{% endblock %}
+
+{% block description %}Discover current season anime 2025, top-rated series, and upcoming releases. Real-time anime database with MyAnimeList integration. Track your favorite anime series.{% endblock %}
+
+{% block keywords %}current season anime 2025, anime tracker, MyAnimeList, top anime series, upcoming anime, anime database, watch anime online, anime news{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Current Season Anime 2025",
+  "description": "Discover current season anime, top-rated series, and upcoming releases with real-time data from MyAnimeList.",
+  "url": "{{ url_for('index', _external=True) }}",
+  "mainEntity": {
+    "@type": "ItemList",
+    "name": "Current Season Anime",
+    "description": "Latest anime series currently airing",
+    "numberOfItems": "25+"
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "{{ url_for('index', _external=True) }}"
+      }
+    ]
+  }
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
@@ -12,12 +45,14 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 col-md-12">
-                <h1 class="hero-title mb-4">
-                    Welcome to <span class="brand-highlight" style="color: #ff6b9d !important; -webkit-text-fill-color: #ff6b9d !important;">Anihour</span>
-                </h1>
-                <p class="hero-subtitle mb-4">
-                    Your ultimate destination for discovering amazing anime series, tracking favorites, and staying updated with the latest releases.
-                </p>
+                <header>
+                    <h1 class="hero-title mb-4">
+                        Welcome to <span class="brand-highlight" style="color: #ff6b9d !important; -webkit-text-fill-color: #ff6b9d !important;">Anihour</span> - Your 2025 Anime Hub
+                    </h1>
+                    <p class="hero-subtitle mb-4">
+                        Discover current season anime 2025, explore top-rated series, and track upcoming releases with real-time MyAnimeList data. Your ultimate anime companion.
+                    </p>
+                </header>
                 <div class="hero-buttons">
                     <a href="/top" class="btn btn-primary btn-lg me-3 mb-2">
                         <i class="fas fa-trophy me-2"></i>Explore Top Anime
@@ -30,7 +65,7 @@
             <div class="col-lg-4 col-md-12">
                 <div class="hero-image-placeholder" id="heroImageBox">
                     <div class="hero-current-anime" id="heroCurrentAnime">
-                        <img id="heroAnimeImage" class="hero-anime-img" alt="Current Anime" style="display: none;">
+                        <img id="heroAnimeImage" class="hero-anime-img" alt="Featured current season anime series" style="display: none;" loading="eager">
                         <div class="hero-anime-overlay">
                             <i class="fas fa-play-circle hero-icon"></i>
                             <div class="hero-anime-info">
@@ -185,13 +220,12 @@ document.addEventListener('DOMContentLoaded', function() {
     <div id="searchResults" class="search-results-section"></div>
     
     <!-- Current Season Anime Section -->
-    <section class="content-section">
+    <section class="content-section" aria-labelledby="current-season-heading">
         <div class="section-header">
-            <h2 class="section-title">
-                <i class="fas fa-tv me-3"></i>Current Season
+            <h2 id="current-season-heading" class="section-title">
+                <i class="fas fa-tv me-3" aria-hidden="true"></i>Current Season Anime 2025
             </h2>
-
-            <a href="/" class="btn btn-outline-primary btn-sm">View All</a>
+            <a href="/" class="btn btn-outline-primary btn-sm" aria-label="View all current season anime">View All</a>
         </div>
         <div id="currentSeasonAnime">
             <div class="loading-state">
@@ -202,13 +236,12 @@ document.addEventListener('DOMContentLoaded', function() {
     </section>
 
     <!-- Top Anime Section -->
-    <section class="content-section">
+    <section class="content-section" aria-labelledby="top-anime-heading">
         <div class="section-header">
-            <h2 class="section-title">
-                <i class="fas fa-trophy me-3"></i>Top Rated Anime
+            <h2 id="top-anime-heading" class="section-title">
+                <i class="fas fa-trophy me-3" aria-hidden="true"></i>Top Rated Anime of All Time
             </h2>
-
-            <a href="/top" class="btn btn-outline-primary btn-sm">View All</a>
+            <a href="/top" class="btn btn-outline-primary btn-sm" aria-label="View all top rated anime">View All</a>
         </div>
         <div id="topAnimeSection">
             <div class="loading-state">
@@ -219,13 +252,12 @@ document.addEventListener('DOMContentLoaded', function() {
     </section>
 
     <!-- Upcoming Anime Section -->
-    <section class="content-section">
+    <section class="content-section" aria-labelledby="upcoming-anime-heading">
         <div class="section-header">
-            <h2 class="section-title">
-                <i class="fas fa-clock me-3"></i>Upcoming Releases
+            <h2 id="upcoming-anime-heading" class="section-title">
+                <i class="fas fa-clock me-3" aria-hidden="true"></i>Upcoming Anime 2025
             </h2>
-
-            <a href="/upcoming" class="btn btn-outline-primary btn-sm">View All</a>
+            <a href="/upcoming" class="btn btn-outline-primary btn-sm" aria-label="View all upcoming anime releases">View All</a>
         </div>
         <div id="upcomingAnimeSection">
             <div class="loading-state">

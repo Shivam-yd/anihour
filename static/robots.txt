@@ -1,0 +1,38 @@
+User-agent: *
+Allow: /
+Allow: /static/
+Allow: /api/
+
+# Enhanced crawling directives for SEO
+Crawl-delay: 1
+
+# Priority pages for search engines
+Allow: /top
+Allow: /upcoming  
+Allow: /news
+Allow: /anime/
+
+# Block unnecessary paths
+Disallow: /admin/
+Disallow: /private/
+Disallow: /temp/
+Disallow: /*.json$
+Disallow: /*?*&*
+
+# XML Sitemap location
+Sitemap: https://{{ request.get_host() }}/sitemap.xml
+
+# Specific bot instructions
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot  
+Allow: /
+Crawl-delay: 2
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /

@@ -186,6 +186,89 @@ def api_hero_slideshow_images():
     response.headers['Cache-Control'] = 'public, max-age=300'  # 5 minutes
     return response
 
+# SEO Routes
+@app.route('/sitemap.xml')
+def sitemap():
+    """Generate XML sitemap for search engines"""
+    from datetime import datetime
+    
+    # Get current date in ISO format
+    today = datetime.now().strftime('%Y-%m-%d')
+    
+    # Define your website pages with priorities
+    pages = [
+        {'url': '/', 'changefreq': 'daily', 'priority': '1.0'},
+        {'url': '/top', 'changefreq': 'weekly', 'priority': '0.9'},
+        {'url': '/upcoming', 'changefreq': 'daily', 'priority': '0.8'},
+        {'url': '/news', 'changefreq': 'daily', 'priority': '0.7'},
+    ]
+    
+    # Create XML sitemap
+    xml_content = '''<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'''
+    
+    for page in pages:
+        xml_content += f'''
+    <url>
+        <loc>{request.host_url.rstrip('/')}{page['url']}</loc>
+        <lastmod>{today}</lastmod>
+        <changefreq>{page['changefreq']}</changefreq>
+        <priority>{page['priority']}</priority>
+    </url>'''
+    
+    xml_content += '''
+</urlset>'''
+    
+    response = Response(xml_content, mimetype='application/xml')
+    response.headers['Cache-Control'] = 'public, max-age=86400'  # 24 hours cache
+    return response
+
+@app.route('/robots.txt')
+def robots():
+    """Serve robots.txt with proper host"""
+    robots_content = f"""User-agent: *
+Allow: /
+Allow: /static/
+Allow: /api/
+
+# Enhanced crawling directives for SEO
+Crawl-delay: 1
+
+# Priority pages for search engines
+Allow: /top
+Allow: /upcoming  
+Allow: /news
+Allow: /anime/
+
+# Block unnecessary paths
+Disallow: /admin/
+Disallow: /private/
+Disallow: /temp/
+Disallow: /*.json$
+Disallow: /*?*&*
+
+# XML Sitemap location
+Sitemap: {request.host_url}sitemap.xml
+
+# Specific bot instructions
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot  
+Allow: /
+Crawl-delay: 2
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /"""
+    
+    response = Response(robots_content, mimetype='text/plain')
+    response.headers['Cache-Control'] = 'public, max-age=86400'  # 24 hours cache
+    return response
+
 @app.route('/api/image-proxy')
 def image_proxy():
     """Optimized image proxy with caching and better performance"""

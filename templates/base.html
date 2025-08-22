@@ -5,10 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Anihour - Discover Amazing Anime{% endblock %}</title>
     
-    <!-- Meta Tags -->
-    <meta name="description" content="Track ongoing anime, discover top-rated series, and stay updated with the latest anime news. Your ultimate anime tracking companion.">
-    <meta name="keywords" content="anime, manga, MyAnimeList, anime tracker, ongoing anime, top anime, upcoming anime">
+    <!-- Essential Meta Tags -->
+    <meta name="description" content="{% block description %}Discover and track current season anime, top-rated series, upcoming releases. Real-time anime database powered by MyAnimeList. Your ultimate anime companion for 2025.{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}anime 2025, current season anime, top anime series, anime tracker, MyAnimeList, Jikan API, upcoming anime, anime database, watch anime{% endblock %}">
     <meta name="author" content="Anihour">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{% block canonical %}{{ request.url }}{% endblock %}">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ self.description() }}{% endblock %}">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:site_name" content="Anihour">
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='images/anihour-og-image.jpg', _external=True) }}{% endblock %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ self.title() }}">
+    <meta name="twitter:description" content="{{ self.description() }}">
+    <meta name="twitter:image" content="{{ self.og_image() }}">
+    <meta name="twitter:site" content="@anihour">
+    <meta name="twitter:creator" content="@anihour">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="theme-color" content="#ff6b9d">
+    <meta name="msapplication-TileColor" content="#ff6b9d">
+    <meta name="application-name" content="Anihour">
+    <meta name="apple-mobile-web-app-title" content="Anihour">
     
     <!-- Preconnect to external domains for faster loading -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -16,18 +46,71 @@
     <link rel="preconnect" href="https://api.jikan.moe">
     <link rel="preconnect" href="https://cdn.myanimelist.net">
     
-    <!-- Bootstrap 5 CSS with optimized loading -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <!-- Critical CSS Optimization -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"></noscript>
     
-    <!-- Font Awesome Icons with optimized loading -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+    <!-- Font Awesome Icons with performance optimization -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"></noscript>
     
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"?v=1.8>
+    <!-- Custom CSS - Critical path -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"?v=1.9>
     
-    <!-- Favicon -->
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="//api.jikan.moe">
+    <link rel="dns-prefetch" href="//cdn.myanimelist.net">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Favicon and App Icons -->
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎌</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><text y='.9em' font-size='160'>🎌</text></svg>">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Anihour",
+      "description": "Discover and track current season anime, top-rated series, and upcoming releases with real-time data from MyAnimeList.",
+      "url": "{{ url_for('index', _external=True) }}",
+      "logo": "{{ url_for('static', filename='images/anihour-logo.png', _external=True) }}",
+      "sameAs": [
+        "https://www.youtube.com/@anihourofficial1471"
+      ],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "{{ url_for('index', _external=True) }}?search={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Anihour",
+      "description": "Your ultimate anime tracking and discovery platform",
+      "url": "{{ url_for('index', _external=True) }}",
+      "logo": "{{ url_for('static', filename='images/anihour-logo.png', _external=True) }}",
+      "foundingDate": "2025",
+      "sameAs": [
+        "https://www.youtube.com/@anihourofficial1471"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Customer Service",
+        "availableLanguage": "English"
+      }
+    }
+    </script>
+    
+    {% block structured_data %}{% endblock %}
     {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -180,11 +263,29 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Bootstrap 5 JS with optimized loading -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous" defer></script>
+    <!-- Critical JavaScript loading optimization -->
+    <script>
+    // Inline critical path CSS loading function
+    function loadCSS(href) {
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        document.head.appendChild(link);
+    }
     
-    <!-- Custom JS -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"?v=1.3 defer></script>
+    // Performance monitoring for Core Web Vitals
+    if ('web-vital' in window) {
+        new PerformanceObserver(entryList => {
+            for (const entry of entryList.getEntries()) {
+                console.log('Web Vital:', entry.name, entry.value);
+            }
+        }).observe({entryTypes: ['navigation', 'paint', 'largest-contentful-paint']});
+    }
+    </script>
+    
+    <!-- Optimized JavaScript loading -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous" defer></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"?v=1.4 defer></script>
     
     <!-- Back to Top Script -->
     <script>
