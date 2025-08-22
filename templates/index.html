@@ -106,27 +106,13 @@
         <div class="ad-banner-container">
             <!-- Desktop/Leaderboard Ad -->
             <div class="desktop-ad-wrapper">
-                <div class="ad-label">🎯 Advertisement Zone</div>
-                <div id="container-598512b09e1a166b01e6346dc7afe42d" class="ad-container">
-                    <div class="ad-placeholder">
-                        <i class="fas fa-ad"></i><br>
-                        <strong>Advertisement Loading...</strong><br>
-                        <small>Support Anihour by viewing ads</small>
-                    </div>
-                </div>
+                <div id="container-598512b09e1a166b01e6346dc7afe42d" class="ad-container"></div>
                 <script async data-cfasync="false" src="//pl27480514.profitableratecpm.com/598512b09e1a166b01e6346dc7afe42d/invoke.js"></script>
             </div>
             
             <!-- Mobile Banner Ad -->
             <div class="mobile-ad-wrapper">
-                <div class="ad-label mobile">📱 Mobile Advertisement</div>
-                <div id="mobile-ad-container" class="ad-container">
-                    <div class="ad-placeholder mobile-placeholder">
-                        <i class="fas fa-mobile-alt"></i><br>
-                        <strong>Mobile Ad Loading...</strong><br>
-                        <small>Help support our app!</small>
-                    </div>
-                </div>
+                <div id="mobile-ad-container" class="ad-container"></div>
                 <script type="text/javascript">
                     atOptions = {
                         'key' : '4e227d9b0648194346f46866a208fbb6',
@@ -142,42 +128,54 @@
     </div>
 </div>
 
-<!-- Ad Loading Script -->
+<!-- Ad Detection Script -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Function to hide placeholder when ad loads
-    function hideAdPlaceholder(containerId) {
-        setTimeout(function() {
-            const container = document.getElementById(containerId);
-            const placeholder = container ? container.querySelector('.ad-placeholder') : null;
-            
-            if (container && placeholder) {
-                // Check if ad content has loaded (container has children other than placeholder)
-                const hasAdContent = Array.from(container.children).some(child => 
-                    !child.classList.contains('ad-placeholder') && child.innerHTML.trim()
-                );
-                
-                if (hasAdContent) {
-                    placeholder.style.display = 'none';
-                    console.log('Ad loaded successfully in:', containerId);
-                } else {
-                    // Keep placeholder visible if no ad loaded
-                    placeholder.innerHTML = 'Advertisement • Click to support us!';
-                    placeholder.style.cursor = 'pointer';
-                }
+    const adSection = document.querySelector('.ad-banner-section');
+    
+    // Function to check if ads are loaded and show section
+    function checkForAds() {
+        const desktopContainer = document.getElementById('container-598512b09e1a166b01e6346dc7afe42d');
+        const mobileContainer = document.getElementById('mobile-ad-container');
+        
+        let hasDesktopAd = false;
+        let hasMobileAd = false;
+        
+        // Check desktop ad
+        if (desktopContainer && desktopContainer.innerHTML.trim() && 
+            desktopContainer.children.length > 0) {
+            hasDesktopAd = true;
+        }
+        
+        // Check mobile ad  
+        if (mobileContainer && mobileContainer.innerHTML.trim() && 
+            mobileContainer.children.length > 0) {
+            hasMobileAd = true;
+        }
+        
+        // Show section if any ads are loaded
+        if (hasDesktopAd || hasMobileAd) {
+            if (adSection) {
+                adSection.style.display = 'block';
+                console.log('Ad section shown - ads detected');
             }
-        }, 3000); // Wait 3 seconds for ad to load
+        }
     }
     
-    // Monitor ad containers
-    hideAdPlaceholder('container-598512b09e1a166b01e6346dc7afe42d');
-    hideAdPlaceholder('mobile-ad-container');
+    // Check immediately and then periodically
+    setTimeout(checkForAds, 1000);
+    setTimeout(checkForAds, 3000);
+    setTimeout(checkForAds, 5000);
     
-    // Make ad sections more visible
-    const adSection = document.querySelector('.ad-banner-section');
-    if (adSection) {
-        adSection.style.display = 'block';
-        adSection.style.visibility = 'visible';
+    // Also use mutation observer to detect ad insertion
+    const observer = new MutationObserver(checkForAds);
+    if (document.getElementById('container-598512b09e1a166b01e6346dc7afe42d')) {
+        observer.observe(document.getElementById('container-598512b09e1a166b01e6346dc7afe42d'), 
+            { childList: true, subtree: true });
+    }
+    if (document.getElementById('mobile-ad-container')) {
+        observer.observe(document.getElementById('mobile-ad-container'), 
+            { childList: true, subtree: true });
     }
 });
 </script>
