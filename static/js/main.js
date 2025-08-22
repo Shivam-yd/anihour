@@ -135,7 +135,8 @@ class AnimeTracker {
                 this.loadHomepageSections();
                 break;
             case '/top':
-                this.loadTopAnime();
+                // Let the top anime page handle its own loading with filter buttons
+                this.initializeTopAnimePage();
                 break;
             case '/upcoming':
                 this.loadUpcomingAnime();
@@ -279,6 +280,18 @@ class AnimeTracker {
             console.error('Error loading top anime:', error);
             this.showError('topAnimeContent', 'Network error occurred');
         }
+    }
+
+    initializeTopAnimePage() {
+        // Load initial TV series for the top anime page
+        // This will be handled by the page's inline script, 
+        // but we trigger the first category (TV) to load
+        setTimeout(() => {
+            const tvButton = document.querySelector('.filter-btn[data-type="tv"]');
+            if (tvButton) {
+                tvButton.click();
+            }
+        }, 100);
     }
 
     async loadUpcomingAnime() {
