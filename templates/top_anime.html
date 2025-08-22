@@ -3,15 +3,48 @@
 {% block title %}Top Anime - Anihour{% endblock %}
 
 {% block content %}
+<!-- Hero Section -->
 <div class="hero-section">
+    <!-- Background Slideshow -->
+    <div class="hero-slideshow" id="heroSlideshow">
+        <!-- Images will be loaded dynamically -->
+    </div>
     <div class="container">
-        <h1 class="hero-title">
-            <i class="fas fa-trophy me-3"></i>
-            Top Rated Anime
-        </h1>
-        <p class="hero-subtitle">
-            Discover the highest-rated anime series of all time
-        </p>
+        <div class="row align-items-center">
+            <div class="col-lg-8 col-md-12">
+                <h1 class="hero-title mb-4">
+                    <i class="fas fa-trophy me-3"></i>Top Rated Anime
+                </h1>
+                <p class="hero-subtitle mb-4">
+                    Discover the highest-rated anime series of all time, ranked by fans and critics worldwide.
+                </p>
+                <div class="hero-buttons">
+                    <a href="/" class="btn btn-primary btn-lg me-3 mb-2">
+                        <i class="fas fa-home me-2"></i>Browse Current
+                    </a>
+                    <a href="/upcoming" class="btn btn-outline-light btn-lg mb-2">
+                        <i class="fas fa-clock me-2"></i>See Upcoming
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <div class="hero-image-placeholder" id="heroImageBox">
+                    <div class="hero-current-anime" id="heroCurrentAnime">
+                        <img id="heroAnimeImage" class="hero-anime-img" alt="Current Anime" style="display: none;">
+                        <div class="hero-anime-overlay">
+                            <i class="fas fa-play-circle hero-icon"></i>
+                            <div class="hero-anime-info">
+                                <h4 id="heroAnimeTitle" class="hero-anime-title"></h4>
+                                <p id="heroAnimeType" class="hero-anime-type"></p>
+                            </div>
+                        </div>
+                        <div class="hero-loading">
+                            <i class="fas fa-play-circle hero-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -50,6 +83,188 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Hero Background Slideshow
+    let slideshowImages = [];
+    let currentSlideIndex = 0;
+    
+    async function loadHeroSlideshow() {
+        try {
+            console.log('Loading hero slideshow images...');
+            const response = await fetch('/api/hero-slideshow-images');
+            const data = await response.json();
+            
+            console.log('Slideshow API response:', data);
+            
+            if (data.images && data.images.length > 0) {
+                slideshowImages = data.images;
+                console.log(`Found ${slideshowImages.length} images for slideshow`);
+                initializeSlideshow();
+            } else {
+                console.warn('No slideshow images found');
+            }
+        } catch (error) {
+            console.error('Error loading slideshow images:', error);
+        }
+    }
+    
+    function initializeSlideshow() {
+        const slideshowContainer = document.getElementById('heroSlideshow');
+        
+        if (!slideshowContainer) {
+            console.error('Slideshow container not found');
+            return;
+        }
+        
+        console.log('Initializing professional slideshow');
+        
+        // Create image elements
+        slideshowImages.forEach((imageData, index) => {
+            const img = document.createElement('img');
+            img.src = `/api/image-proxy?url=${encodeURIComponent(imageData.image_url)}`;
+            img.alt = imageData.title;
+            img.className = `hero-slideshow-image${index === 0 ? ' active' : ''}`;
+            img.loading = index < 2 ? 'eager' : 'lazy';
+            img.decoding = 'async';
+            img.dataset.slideIndex = index;
+            
+            img.onload = function() {
+                console.log(`Slideshow image ${index + 1} loaded:`, imageData.title);
+            };
+            
+            img.onerror = function() {
+                console.error('Failed to load slideshow image:', imageData.title);
+                this.remove();
+            };
+            
+            slideshowContainer.appendChild(img);
+        });
+        
+        console.log(`Initialized slideshow with ${slideshowImages.length} images`);
+        
+        // Initialize hero anime box
+        initializeHeroAnimeBox();
+        
+        // Start auto slideshow
+        if (slideshowImages.length > 1) {
+            startAutoSlide();
+        }
+    }
+    
+    function initializeHeroAnimeBox() {
+        if (slideshowImages.length > 0) {
+            updateHeroAnimeBox(0);
+        }
+        
+        const heroBox = document.getElementById('heroImageBox');
+        if (heroBox) {
+            heroBox.addEventListener('click', () => {
+                const currentAnime = slideshowImages[currentSlideIndex];
+                if (currentAnime) {
+                    searchAnimeForDetails(currentAnime.title);
+                }
+            });
+        }
+    }
+    
+    function updateHeroAnimeBox(index) {
+        if (!slideshowImages[index]) {
+            console.log('No slideshow image at index:', index);
+            return;
+        }
+        
+        const currentAnime = slideshowImages[index];
+        const heroImg = document.getElementById('heroAnimeImage');
+        const heroTitle = document.getElementById('heroAnimeTitle');
+        const heroType = document.getElementById('heroAnimeType');
+        const heroLoading = document.querySelector('.hero-loading');
+        
+        console.log('Updating hero anime box with:', currentAnime.title, 'at index:', index);
+        
+        if (heroImg && heroTitle && heroType) {
+            heroImg.classList.remove('loaded');
+            heroImg.style.display = 'none';
+            if (heroLoading) {
+                heroLoading.style.display = 'flex';
+            }
+            
+            heroImg.src = `/api/image-proxy?url=${encodeURIComponent(currentAnime.image_url)}`;
+            heroImg.alt = currentAnime.title;
+            
+            heroTitle.textContent = currentAnime.title;
+            heroType.textContent = currentAnime.type === 'current' ? 'Current Season' : 'Top Anime';
+            
+            heroImg.onload = function() {
+                console.log('Hero anime image loaded:', currentAnime.title);
+                this.style.display = 'block';
+                this.classList.add('loaded');
+                if (heroLoading) {
+                    heroLoading.style.display = 'none';
+                }
+            };
+            
+            heroImg.onerror = function() {
+                console.error('Hero anime image failed to load:', currentAnime.title);
+                if (heroLoading) {
+                    heroLoading.style.display = 'flex';
+                }
+            };
+        }
+    }
+    
+    async function searchAnimeForDetails(title) {
+        try {
+            const response = await fetch(`/api/search?q=${encodeURIComponent(title)}&limit=1`);
+            const data = await response.json();
+            
+            if (data.data && data.data.length > 0) {
+                const animeId = data.data[0].mal_id;
+                window.location.href = `/anime/${animeId}`;
+            } else {
+                window.open(`https://myanimelist.net/search/all?q=${encodeURIComponent(title)}`, '_blank');
+            }
+        } catch (error) {
+            console.error('Error searching anime:', error);
+            window.open(`https://myanimelist.net/search/all?q=${encodeURIComponent(title)}`, '_blank');
+        }
+    }
+    
+    let autoSlideInterval;
+    
+    function goToSlide(index) {
+        const images = document.querySelectorAll('.hero-slideshow-image');
+        
+        if (images.length === 0 || index >= images.length) return;
+        
+        images[currentSlideIndex]?.classList.remove('active');
+        
+        currentSlideIndex = index;
+        images[currentSlideIndex].classList.add('active');
+        
+        updateHeroAnimeBox(currentSlideIndex);
+        
+        restartAutoSlide();
+    }
+    
+    function nextSlide() {
+        goToSlide((currentSlideIndex + 1) % slideshowImages.length);
+    }
+    
+    function startAutoSlide() {
+        autoSlideInterval = setInterval(nextSlide, 6000);
+        console.log('Auto slideshow started');
+    }
+    
+    function restartAutoSlide() {
+        if (autoSlideInterval) {
+            clearInterval(autoSlideInterval);
+            startAutoSlide();
+        }
+    }
+    
+    // Load slideshow immediately
+    loadHeroSlideshow();
+    
+    console.log('Top anime page initialized');
     // Filter button functionality
     const filterButtons = document.querySelectorAll('.filter-btn');
     
