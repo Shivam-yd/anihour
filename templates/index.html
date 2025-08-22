@@ -105,11 +105,18 @@
     <div class="container">
         <div class="ad-banner-container">
             <!-- Desktop/Leaderboard Ad -->
-            <script async="async" data-cfasync="false" src="//pl27480514.profitableratecpm.com/598512b09e1a166b01e6346dc7afe42d/invoke.js"></script>
-            <div id="container-598512b09e1a166b01e6346dc7afe42d"></div>
+            <div class="desktop-ad-wrapper">
+                <div id="container-598512b09e1a166b01e6346dc7afe42d" class="ad-container">
+                    <div class="ad-placeholder">Advertisement Loading...</div>
+                </div>
+                <script async data-cfasync="false" src="//pl27480514.profitableratecpm.com/598512b09e1a166b01e6346dc7afe42d/invoke.js"></script>
+            </div>
             
             <!-- Mobile Banner Ad -->
-            <div class="mobile-ad-container">
+            <div class="mobile-ad-wrapper">
+                <div id="mobile-ad-container" class="ad-container">
+                    <div class="ad-placeholder mobile-placeholder">Mobile Advertisement Loading...</div>
+                </div>
                 <script type="text/javascript">
                     atOptions = {
                         'key' : '4e227d9b0648194346f46866a208fbb6',
@@ -118,12 +125,52 @@
                         'width' : 320,
                         'params' : {}
                     };
+                    document.write('<script type="text/javascript" src="//www.highperformanceformat.com/4e227d9b0648194346f46866a208fbb6/invoke.js"><\/script>');
                 </script>
-                <script type="text/javascript" src="//www.highperformanceformat.com/4e227d9b0648194346f46866a208fbb6/invoke.js"></script>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Ad Loading Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to hide placeholder when ad loads
+    function hideAdPlaceholder(containerId) {
+        setTimeout(function() {
+            const container = document.getElementById(containerId);
+            const placeholder = container ? container.querySelector('.ad-placeholder') : null;
+            
+            if (container && placeholder) {
+                // Check if ad content has loaded (container has children other than placeholder)
+                const hasAdContent = Array.from(container.children).some(child => 
+                    !child.classList.contains('ad-placeholder') && child.innerHTML.trim()
+                );
+                
+                if (hasAdContent) {
+                    placeholder.style.display = 'none';
+                    console.log('Ad loaded successfully in:', containerId);
+                } else {
+                    // Keep placeholder visible if no ad loaded
+                    placeholder.innerHTML = 'Advertisement • Click to support us!';
+                    placeholder.style.cursor = 'pointer';
+                }
+            }
+        }, 3000); // Wait 3 seconds for ad to load
+    }
+    
+    // Monitor ad containers
+    hideAdPlaceholder('container-598512b09e1a166b01e6346dc7afe42d');
+    hideAdPlaceholder('mobile-ad-container');
+    
+    // Make ad sections more visible
+    const adSection = document.querySelector('.ad-banner-section');
+    if (adSection) {
+        adSection.style.display = 'block';
+        adSection.style.visibility = 'visible';
+    }
+});
+</script>
 
 <div class="container">
     <!-- Search Results Section (Hidden by default) -->
