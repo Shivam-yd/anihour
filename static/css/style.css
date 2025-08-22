@@ -1571,3 +1571,201 @@ body::before {
 #backToTop.hide {
     display: none !important;
 }
+
+/* Ad Banner Section - Hidden by default */
+.ad-banner-section {
+    padding: 40px 0;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: visible;
+    margin: 20px 0;
+    display: none; /* Hidden by default */
+}
+
+.ad-banner-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(255, 107, 157, 0.03) 0%, transparent 70%),
+                radial-gradient(circle at 70% 50%, rgba(78, 205, 196, 0.03) 0%, transparent 70%);
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.ad-banner-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 100px;
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    gap: 15px;
+    transition: all 0.3s ease;
+}
+
+.ad-banner-container:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 107, 157, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Ad Wrapper Containers */
+.desktop-ad-wrapper, .mobile-ad-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* Ad Container Styling */
+.ad-container {
+    display: block !important;
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+}
+
+/* Ad container specific IDs */
+#container-598512b09e1a166b01e6346dc7afe42d,
+#mobile-ad-container {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+    position: relative;
+}
+
+/* Ad Placeholder */
+.ad-placeholder {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    font-weight: 600;
+    padding: 25px;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255, 107, 157, 0.15) 0%, rgba(78, 205, 196, 0.15) 100%);
+    border-radius: 12px;
+    border: 2px solid rgba(255, 107, 157, 0.4);
+    display: block;
+    min-height: 60px;
+    line-height: 1.5;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.5px;
+}
+
+.mobile-placeholder {
+    padding: 18px;
+    min-height: 45px;
+    font-size: 14px;
+}
+
+/* Ad Label */
+.ad-label {
+    color: rgba(255, 107, 157, 0.8);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.ad-label.mobile {
+    color: rgba(78, 205, 196, 0.8);
+}
+
+/* Responsive - Hide/Show based on device */
+@media (min-width: 769px) {
+    .mobile-ad-wrapper {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .desktop-ad-wrapper {
+        display: none;
+    }
+    
+    .mobile-ad-wrapper {
+        display: flex;
+    }
+    
+    .ad-banner-container {
+        min-height: 100px;
+        gap: 15px;
+    }
+}
+
+/* Additional Responsive adjustments */
+@media (max-width: 576px) {
+    .ad-banner-section {
+        padding: 40px 0;
+    }
+    
+    .ad-banner-container {
+        min-height: 80px;
+        padding: 15px;
+        border-radius: 15px;
+    }
+    
+    .ad-placeholder {
+        padding: 12px;
+        font-size: 12px;
+        min-height: 35px;
+    }
+}
+
+/* Core Web Vitals Optimization */
+/* Prevent layout shifts */
+.hero-anime-img {
+    aspect-ratio: 16/9;
+    object-fit: cover;
+}
+
+.anime-card img {
+    aspect-ratio: 3/4;
+    object-fit: cover;
+}
+
+/* Optimize font loading */
+@font-face {
+    font-family: 'InterVariable';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZJhiJ-Ek-_EeA.woff2') format('woff2');
+}
+
+/* Performance optimizations */
+* {
+    will-change: auto;
+}
+
+.hero-section {
+    contain: layout style;
+}
+
+.content-section {
+    contain: layout;
+}
+
+/* Reduce paint complexity */
+.card:hover {
+    transform: translateY(-4px);
+    will-change: transform;
+}
