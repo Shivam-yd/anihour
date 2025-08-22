@@ -1571,3 +1571,81 @@ body::before {
 #backToTop.hide {
     display: none !important;
 }
+
+/* Ad Banner Section */
+.ad-banner-section {
+    padding: 60px 0;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.ad-banner-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(255, 107, 157, 0.03) 0%, transparent 70%),
+                radial-gradient(circle at 70% 50%, rgba(78, 205, 196, 0.03) 0%, transparent 70%);
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.ad-banner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 120px;
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.ad-banner-container:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 107, 157, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Ad container styling */
+#container-598512b09e1a166b01e6346dc7afe42d {
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .ad-banner-section {
+        padding: 40px 0;
+    }
+    
+    .ad-banner-container {
+        min-height: 80px;
+        padding: 15px;
+        border-radius: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .ad-banner-section {
+        padding: 30px 0;
+    }
+    
+    .ad-banner-container {
+        min-height: 70px;
+        padding: 12px;
+    }
+}
