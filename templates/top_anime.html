@@ -53,6 +53,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Filter button functionality
     const filterButtons = document.querySelectorAll('.filter-btn');
     
+    // Load initial TV series data
+    loadInitialData();
+    
     filterButtons.forEach(button => {
         button.addEventListener('click', async function() {
             // Update active button
@@ -187,6 +190,23 @@ document.addEventListener('DOMContentLoaded', function() {
     function truncateText(text, length) {
         if (!text) return '';
         return text.length > length ? text.substring(0, length) + '...' : text;
+    }
+    
+    // Load initial TV series data
+    async function loadInitialData() {
+        try {
+            const response = await fetch('/api/top-anime?type=tv');
+            const data = await response.json();
+            
+            if (response.ok && data.data) {
+                displayFilteredAnime(data.data, 'tv');
+            } else {
+                showError('Failed to load top TV series');
+            }
+        } catch (error) {
+            console.error('Initial load error:', error);
+            showError('Network error occurred');
+        }
     }
 });
 </script>

@@ -283,15 +283,9 @@ class AnimeTracker {
     }
 
     initializeTopAnimePage() {
-        // Load initial TV series for the top anime page
-        // This will be handled by the page's inline script, 
-        // but we trigger the first category (TV) to load
-        setTimeout(() => {
-            const tvButton = document.querySelector('.filter-btn[data-type="tv"]');
-            if (tvButton) {
-                tvButton.click();
-            }
-        }, 100);
+        // Top anime page handles its own initialization
+        // No action needed from main.js
+        console.log('Top anime page initialized');
     }
 
     async loadUpcomingAnime() {
