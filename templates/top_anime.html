@@ -146,8 +146,8 @@ document.addEventListener('DOMContentLoaded', function() {
                          alt="${anime.title}" 
                          class="anime-card-img" 
                          loading="lazy"
-                         onerror="console.error('Top anime image failed to load:', this.src); this.onerror=null; this.setAttribute('data-loaded', 'true'); this.parentElement.classList.add('loaded');"
-                         onload="console.log('Top anime image loaded:', this.alt); this.setAttribute('data-loaded', 'true'); this.parentElement.classList.add('loaded');">
+                         onerror="console.error('Top anime image failed to load:', this.src); this.onerror=null; this.setAttribute('data-loaded', 'true'); this.style.opacity='1'; this.parentElement.classList.add('loaded');"
+                         onload="console.log('Top anime image loaded:', this.alt); this.setAttribute('data-loaded', 'true'); this.style.opacity='1'; this.parentElement.classList.add('loaded');">
                     <div class="anime-card-overlay">
                         <i class="fas fa-play-circle"></i>
                     </div>
