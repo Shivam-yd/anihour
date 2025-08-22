@@ -57,6 +57,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const initialType = urlParams.get('type') || 'tv';
     
+    console.log('URL params:', window.location.search);
+    console.log('Initial type:', initialType);
+    
     // Set active button based on URL parameter
     setActiveButton(initialType);
     
