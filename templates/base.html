@@ -167,12 +167,16 @@
     <!-- Back to Top Button -->
     <button id="backToTop" class="position-fixed" 
             style="bottom: 20px; right: 20px; display: none; z-index: 1000; 
-                   width: 55px; height: 55px; border-radius: 50%; 
+                   width: 55px !important; height: 55px !important; 
+                   border-radius: 50% !important; 
                    background: linear-gradient(135deg, #ff6b9d, #4ecdc4); 
-                   border: none; color: white; font-size: 16px;
+                   border: none !important; color: white; font-size: 16px;
                    box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
                    transition: all 0.3s ease;
-                   cursor: pointer;">
+                   cursor: pointer;
+                   padding: 0 !important;
+                   min-width: auto !important;
+                   line-height: 1 !important;">
         <i class="fas fa-arrow-up"></i>
     </button>
 
@@ -187,6 +191,9 @@
         // Back to Top Button
         const backToTopBtn = document.getElementById('backToTop');
         
+        // Ensure the button stays circular
+        backToTopBtn.style.borderRadius = '50%';
+        
         window.addEventListener('scroll', () => {
             if (window.pageYOffset > 300) {
                 backToTopBtn.style.display = 'block';
@@ -200,6 +207,17 @@
                 top: 0,
                 behavior: 'smooth'
             });
+        });
+        
+        // Add hover effect
+        backToTopBtn.addEventListener('mouseenter', () => {
+            backToTopBtn.style.transform = 'scale(1.1)';
+            backToTopBtn.style.boxShadow = '0 6px 20px rgba(255, 107, 157, 0.4)';
+        });
+        
+        backToTopBtn.addEventListener('mouseleave', () => {
+            backToTopBtn.style.transform = 'scale(1)';
+            backToTopBtn.style.boxShadow = '0 4px 15px rgba(255, 107, 157, 0.3)';
         });
     </script>
     
