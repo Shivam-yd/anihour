@@ -1550,3 +1550,24 @@ body::before {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-color);
 }
+
+/* Back to Top Button - Perfect Circle */
+#backToTop {
+    width: 55px !important;
+    height: 55px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: auto !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+}
+
+#backToTop.show {
+    display: flex !important;
+}
+
+#backToTop.hide {
+    display: none !important;
+}
