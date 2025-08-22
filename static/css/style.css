@@ -1567,7 +1567,9 @@ body::before {
     z-index: 1000;
     box-shadow: var(--shadow);
     transition: all 0.3s ease;
-    display: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #backToTop:hover {
