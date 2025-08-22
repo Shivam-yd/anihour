@@ -233,11 +233,12 @@ def image_proxy():
         }
         
         # Cache the image response
-        cache[cache_key] = {
+        cached_data = {
             'content': response.content,
             'content_type': response.headers.get('content-type', 'image/jpeg'),
             'headers': headers
         }
+        cache[cache_key] = (cached_data, current_time)
         
         return Response(
             response.content,

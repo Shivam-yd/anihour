@@ -135,7 +135,8 @@ class AnimeTracker {
                 this.loadHomepageSections();
                 break;
             case '/top':
-                this.loadTopAnime();
+                // Let the top anime page handle its own loading with filter buttons
+                this.initializeTopAnimePage();
                 break;
             case '/upcoming':
                 this.loadUpcomingAnime();
@@ -279,6 +280,12 @@ class AnimeTracker {
             console.error('Error loading top anime:', error);
             this.showError('topAnimeContent', 'Network error occurred');
         }
+    }
+
+    initializeTopAnimePage() {
+        // Top anime page handles its own initialization
+        // No action needed from main.js
+        console.log('Top anime page initialized');
     }
 
     async loadUpcomingAnime() {
