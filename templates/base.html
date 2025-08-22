@@ -191,12 +191,13 @@
         // Back to Top Button
         const backToTopBtn = document.getElementById('backToTop');
         
-        // Ensure the button stays circular
-        backToTopBtn.style.borderRadius = '50%';
+        // Ensure button is hidden initially
+        backToTopBtn.style.display = 'none';
         
+        // Scroll event listener
         window.addEventListener('scroll', () => {
             if (window.pageYOffset > 300) {
-                backToTopBtn.style.display = 'block';
+                backToTopBtn.style.display = 'flex';
             } else {
                 backToTopBtn.style.display = 'none';
             }
