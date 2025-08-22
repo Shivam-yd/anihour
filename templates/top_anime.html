@@ -113,7 +113,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function createTopAnimeCard(anime, rank) {
         const rating = anime.score ? anime.score.toFixed(1) : 'N/A';
-        const image = anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url || '';
+        
+        // Use image proxy for proper image loading
+        let image = '';
+        if (anime.images && anime.images.jpg) {
+            const originalImage = anime.images.jpg.large_image_url || anime.images.jpg.image_url || anime.images.jpg.small_image_url;
+            if (originalImage && originalImage.startsWith('https://cdn.myanimelist.net/')) {
+                image = `/api/image-proxy?url=${encodeURIComponent(originalImage)}`;
+            } else {
+                image = originalImage;
+            }
+        }
+        
+        // Use placeholder if no valid image found
+        if (!image) {
+            image = `data:image/svg+xml;charset=UTF-8,%3csvg width='300' height='400' xmlns='http://www.w3.org/2000/svg'%3e%3cdefs%3e%3clinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3e%3cstop offset='0%25' style='stop-color:%23ff6b9d;stop-opacity:1' /%3e%3cstop offset='100%25' style='stop-color:%234ecdc4;stop-opacity:1' /%3e%3c/linearGradient%3e%3c/defs%3e%3crect width='300' height='400' fill='url(%23grad)'/%3e%3ctext x='50%25' y='50%25' font-family='Arial, sans-serif' font-size='18' fill='white' text-anchor='middle' dy='.3em'%3eAnime Image%3c/text%3e%3c/svg%3e`;
+        }
+        
         const synopsis = anime.synopsis ? truncateText(anime.synopsis, 150) : 'No synopsis available.';
         
         return `
@@ -122,9 +138,19 @@ document.addEventListener('DOMContentLoaded', function() {
                      style="width: 40px; height: 40px; font-weight: bold; z-index: 2;">
                     #${rank}
                 </div>
-                <img src="${image}" alt="${anime.title}" class="anime-card-img" loading="lazy">
+                <div class="anime-card-image-container">
+                    <img src="${image}" 
+                         alt="${anime.title}" 
+                         class="anime-card-img" 
+                         loading="lazy"
+                         onerror="console.error('Top anime image failed to load:', this.src); this.onerror=null; this.parentElement.classList.add('loaded');"
+                         onload="console.log('Top anime image loaded:', this.alt); this.parentElement.classList.add('loaded');">
+                    <div class="anime-card-overlay">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                </div>
                 <div class="anime-card-body">
-                    <h3 class="anime-card-title">${anime.title}</h3>
+                    <h3 class="anime-card-title">${anime.title || 'Unknown Title'}</h3>
                     <div class="anime-card-info">
                         <span class="anime-rating">★ ${rating}</span>
                         <span class="badge bg-info">${anime.type || 'Unknown'}</span>
