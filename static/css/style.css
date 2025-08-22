@@ -1550,3 +1550,40 @@ body::before {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-color);
 }
+
+/* Back to Top Button */
+#backToTop {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--gradient-1);
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    display: none;
+}
+
+#backToTop:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+    background: var(--gradient-2);
+}
+
+#backToTop:active {
+    transform: translateY(-1px);
+}
+
+#backToTop i {
+    transition: all 0.3s ease;
+}
+
+#backToTop:hover i {
+    transform: scale(1.2);
+}
