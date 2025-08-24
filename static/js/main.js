@@ -3,6 +3,7 @@
 class AnimeTracker {
     constructor() {
         this.currentPage = window.location.pathname;
+        this.adLink = 'https://www.profitableratecpm.com/zyjgv1dna?key=474c2feaf6c5c846dfb4d0fc703962cc';
         this.init();
     }
 
@@ -11,6 +12,104 @@ class AnimeTracker {
         this.loadPageContent();
         this.setupSearch();
         this.setupScrollAnimations();
+        this.setupSmartAdSystem();
+    }
+
+    setupSmartAdSystem() {
+        // Check if user has seen ad before
+        const hasSeenAd = localStorage.getItem('anime_ad_seen');
+        const lastAdTime = localStorage.getItem('anime_last_ad_time');
+        const currentTime = Date.now();
+        
+        // Reset ad status every 24 hours
+        if (lastAdTime && (currentTime - parseInt(lastAdTime) > 24 * 60 * 60 * 1000)) {
+            localStorage.removeItem('anime_ad_seen');
+            localStorage.removeItem('anime_last_ad_time');
+        }
+        
+        // Add smart ad triggers to various elements
+        this.addSmartAdTriggers();
+    }
+
+    addSmartAdTriggers() {
+        // Add ad trigger to navigation links (25% chance for returning users, 80% for new users)
+        document.querySelectorAll('.nav-link').forEach(link => {
+            this.addSmartAdToElement(link, 0.25, 0.80);
+        });
+
+        // Add ad trigger to anime cards (15% chance for returning users, 60% for new users)
+        setTimeout(() => {
+            document.querySelectorAll('.anime-card').forEach(card => {
+                this.addSmartAdToElement(card, 0.15, 0.60);
+            });
+        }, 1000);
+
+        // Add ad trigger to footer links (20% chance for returning users, 70% for new users)
+        document.querySelectorAll('.footer-link').forEach(link => {
+            this.addSmartAdToElement(link, 0.20, 0.70);
+        });
+
+        // Add ad trigger to logo (30% chance for returning users, 90% for new users)
+        const logo = document.querySelector('.navbar-brand');
+        if (logo) {
+            this.addSmartAdToElement(logo, 0.30, 0.90);
+        }
+
+        // Add ad trigger to promotional links (90% chance for returning users, 95% for new users)
+        document.querySelectorAll('.promotional-link').forEach(link => {
+            this.addSmartAdToElement(link, 0.90, 0.95);
+        });
+
+        // Add ad trigger to search button (10% chance for returning users, 40% for new users)
+        const searchBtn = document.querySelector('.search-btn');
+        if (searchBtn) {
+            this.addSmartAdToElement(searchBtn, 0.10, 0.40);
+        }
+    }
+
+    addSmartAdToElement(element, returningUserChance, newUserChance) {
+        const originalHref = element.href;
+        const originalClick = element.onclick;
+        
+        element.addEventListener('click', (e) => {
+            const hasSeenAd = localStorage.getItem('anime_ad_seen');
+            const shouldShowAd = this.shouldShowAd(hasSeenAd, returningUserChance, newUserChance);
+            
+            if (shouldShowAd) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Mark that user has seen the ad
+                localStorage.setItem('anime_ad_seen', 'true');
+                localStorage.setItem('anime_last_ad_time', Date.now().toString());
+                
+                // Store the original destination
+                if (originalHref) {
+                    localStorage.setItem('anime_return_url', originalHref);
+                }
+                
+                // Redirect to ad
+                window.open(this.adLink, '_blank');
+                
+                // For cards with click handlers, delay the original action
+                if (element.classList.contains('anime-card')) {
+                    setTimeout(() => {
+                        const animeId = element.dataset.animeId;
+                        if (animeId) {
+                            window.location.href = `/anime/${animeId}`;
+                        }
+                    }, 1000);
+                }
+                
+                return false;
+            }
+        }, true); // Use capture to intercept before other handlers
+    }
+
+    shouldShowAd(hasSeenAd, returningUserChance, newUserChance) {
+        // First-time users get higher chance
+        const chance = hasSeenAd ? returningUserChance : newUserChance;
+        return Math.random() < chance;
     }
 
     setupEventListeners() {
@@ -539,6 +638,9 @@ class AnimeTracker {
     setupAnimeCardEvents() {
         const animeCards = document.querySelectorAll('.anime-card');
         animeCards.forEach(card => {
+            // Add smart ad functionality to new cards
+            this.addSmartAdToElement(card, 0.15, 0.60);
+            
             card.addEventListener('click', () => {
                 const animeId = card.dataset.animeId;
                 if (animeId) {
