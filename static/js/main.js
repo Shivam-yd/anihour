@@ -196,9 +196,8 @@ class AnimeTracker {
         if (applyFiltersBtn) {
             applyFiltersBtn.addEventListener('click', () => {
                 const query = searchInput.value.trim();
-                if (query) {
-                    this.performSearch(query);
-                }
+                // Perform search even without query - filters alone should work
+                this.performSearch(query || '');
                 this.closeFiltersPanel();
             });
         }
@@ -296,17 +295,26 @@ class AnimeTracker {
     }
 
     async performSearch(query) {
-        if (!query) return;
+        // Get filters to check if we have any search criteria
+        const filters = this.getSearchFilters();
+        
+        // Allow search if we have either a query OR filters
+        if (!query && Object.keys(filters).length === 0) {
+            return; // No search criteria provided
+        }
 
         try {
             this.showLoading('searchResults');
             
             // Build search URL with filters
-            const filters = this.getSearchFilters();
             const params = new URLSearchParams({
-                q: query,
                 ...filters
             });
+            
+            // Add query only if provided
+            if (query) {
+                params.append('q', query);
+            }
 
             const response = await fetch(`/api/search?${params.toString()}`);
             const data = await response.json();
@@ -332,16 +340,25 @@ class AnimeTracker {
         // Create filter summary
         const filterSummary = this.createFilterSummary(filters);
 
+        // Create title based on whether we have a query or just filters
+        const titleText = query ? 
+            `Search Results for "<span class="search-query">${query}</span>"` :
+            'Filtered Anime Results';
+
         if (results.length === 0) {
+            const noResultsMessage = query ? 
+                `No anime found for "${query}". Try adjusting your filters or different keywords.` :
+                'No anime found with the selected filters. Try adjusting your filter criteria.';
+                
             container.innerHTML = `
                 <div class="search-results-header">
-                    <h3>Search Results for "<span class="search-query">${query}</span>"</h3>
+                    <h3>${titleText}</h3>
                     <span class="search-results-count">0 results</span>
                 </div>
                 ${filterSummary}
                 <div class="error-message">
                     <div class="error-title">No Results Found</div>
-                    <p>No anime found for "${query}". Try adjusting your filters or different keywords.</p>
+                    <p>${noResultsMessage}</p>
                 </div>
             `;
             return;
@@ -349,7 +366,7 @@ class AnimeTracker {
 
         container.innerHTML = `
             <div class="search-results-header">
-                <h3>Search Results for "<span class="search-query">${query}</span>"</h3>
+                <h3>${titleText}</h3>
                 <span class="search-results-count">${results.length} results</span>
             </div>
             ${filterSummary}

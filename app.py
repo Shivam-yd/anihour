@@ -124,11 +124,16 @@ def api_anime_characters(anime_id):
 def api_search():
     """Enhanced API endpoint for anime search with filters"""
     query = request.args.get('q', '')
-    if not query:
-        return jsonify({'error': 'Search query is required'}), 400
     
     # Build the search URL with parameters
-    search_params = [f'q={urllib.parse.quote(query)}', 'limit=20']
+    search_params = ['limit=20']
+    
+    # Add query if provided
+    if query:
+        search_params.append(f'q={urllib.parse.quote(query)}')
+    else:
+        # If no query, we'll use browse endpoints with filters
+        pass
     
     # Add status filter
     status = request.args.get('status')
@@ -155,7 +160,18 @@ def api_search():
     sort = request.args.get('sort', 'desc')
     search_params.extend([f'order_by={order_by}', f'sort={sort}'])
     
-    search_url = f"/anime?{'&'.join(search_params)}"
+    # Choose appropriate endpoint based on whether we have filters or query
+    if not query and not any([status, anime_type, genres]):
+        # No query and no filters - return top anime
+        search_url = f"/top/anime?type=tv&limit=20"
+    elif not query:
+        # No query but have filters - use search with wildcard or browse
+        # For filter-only searches, we can use the anime endpoint with just filters
+        search_url = f"/anime?{'&'.join(search_params)}"
+    else:
+        # Has query - normal search
+        search_url = f"/anime?{'&'.join(search_params)}"
+    
     logging.debug(f"Search URL: {search_url}")
     
     data = fetch_from_jikan(search_url)
