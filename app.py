@@ -81,8 +81,53 @@ def news():
 
 @app.route('/anime/<int:anime_id>')
 def anime_detail(anime_id):
-    """Anime detail page"""
-    return render_template('anime_detail.html', anime_id=anime_id)
+    """Enhanced anime detail page with SEO data"""
+    # Fetch anime data for SEO meta tags
+    anime_data = fetch_from_jikan(f'/anime/{anime_id}/full')
+    
+    if anime_data and anime_data.get('data'):
+        anime = anime_data['data']
+        
+        # Prepare SEO variables
+        anime_title = anime.get('title', 'Anime Details')
+        anime_synopsis = anime.get('synopsis', '').replace('"', "'") if anime.get('synopsis') else ''
+        anime_image = anime.get('images', {}).get('jpg', {}).get('large_image_url', '')
+        anime_score = anime.get('score', 0)
+        anime_episodes = anime.get('episodes', 'Unknown')
+        anime_rating = anime.get('rating', '')
+        anime_scored_by = anime.get('scored_by', 0)
+        anime_mal_url = anime.get('url', '')
+        anime_aired_from = anime.get('aired', {}).get('from', '')
+        
+        # Prepare genres as JSON array
+        genres = [genre.get('name', '') for genre in anime.get('genres', [])]
+        anime_genres = str(genres).replace("'", '"')
+        
+        # Get studio info
+        studios = anime.get('studios', [])
+        anime_studio = studios[0].get('name', 'Studio') if studios else 'Studio'
+        
+        # Get author/producer info
+        producers = anime.get('producers', [])
+        anime_author = producers[0].get('name', '') if producers else ''
+        
+        return render_template('anime_detail.html', 
+                             anime_id=anime_id,
+                             anime_title=anime_title,
+                             anime_synopsis=anime_synopsis,
+                             anime_image=anime_image,
+                             anime_score=anime_score,
+                             anime_episodes=anime_episodes,
+                             anime_rating=anime_rating,
+                             anime_scored_by=anime_scored_by,
+                             anime_mal_url=anime_mal_url,
+                             anime_aired_from=anime_aired_from,
+                             anime_genres=anime_genres,
+                             anime_studio=anime_studio,
+                             anime_author=anime_author)
+    else:
+        # Fallback for failed API calls
+        return render_template('anime_detail.html', anime_id=anime_id)
 
 # API Routes
 @app.route('/api/current-season')
@@ -207,7 +252,7 @@ def api_news():
 
 @app.route('/api/hero-slideshow-images')
 def api_hero_slideshow_images():
-    """Optimized API endpoint for hero section slideshow images"""
+    """Optimized API endpoint for hero section slideshow images with SEO headers"""
     # Get both current season and top anime for variety (reduced limits for speed)
     current_season = fetch_from_jikan('/seasons/now')
     top_anime = fetch_from_jikan('/top/anime?type=tv&limit=10')  # Reduced from 15
@@ -221,7 +266,9 @@ def api_hero_slideshow_images():
                 images.append({
                     'title': anime.get('title', ''),
                     'image_url': anime['images']['jpg']['large_image_url'],
-                    'type': 'current'
+                    'type': 'current',
+                    'mal_id': anime.get('mal_id', ''),
+                    'score': anime.get('score', 0)
                 })
     
     if top_anime and top_anime.get('data'):
@@ -231,18 +278,22 @@ def api_hero_slideshow_images():
                 images.append({
                     'title': anime.get('title', ''),
                     'image_url': anime['images']['jpg']['large_image_url'],
-                    'type': 'top'
+                    'type': 'top',
+                    'mal_id': anime.get('mal_id', ''),
+                    'score': anime.get('score', 0)
                 })
     
-    # Add cache headers for this endpoint too
+    # Enhanced cache headers for better SEO
     response = jsonify({'images': images})
-    response.headers['Cache-Control'] = 'public, max-age=300'  # 5 minutes
+    response.headers['Cache-Control'] = 'public, max-age=300, stale-while-revalidate=600'  # 5 minutes with stale-while-revalidate
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['Vary'] = 'Accept-Encoding'
     return response
 
 # SEO Routes
 @app.route('/sitemap.xml')
 def sitemap():
-    """Generate XML sitemap for search engines"""
+    """Enhanced XML sitemap for search engines with dynamic content"""
     from datetime import datetime
     
     # Get current date in ISO format
@@ -254,7 +305,41 @@ def sitemap():
         {'url': '/top', 'changefreq': 'weekly', 'priority': '0.9'},
         {'url': '/upcoming', 'changefreq': 'daily', 'priority': '0.8'},
         {'url': '/news', 'changefreq': 'daily', 'priority': '0.7'},
+        {'url': '/top?type=tv', 'changefreq': 'weekly', 'priority': '0.8'},
+        {'url': '/top?type=movie', 'changefreq': 'weekly', 'priority': '0.8'},
+        {'url': '/top?type=ova', 'changefreq': 'weekly', 'priority': '0.7'},
     ]
+    
+    # Add dynamic anime detail pages from current season
+    try:
+        current_season = fetch_from_jikan('/seasons/now')
+        if current_season and current_season.get('data'):
+            for anime in current_season['data'][:20]:  # Limit to top 20 for sitemap size
+                if anime.get('mal_id'):
+                    pages.append({
+                        'url': f"/anime/{anime['mal_id']}",
+                        'changefreq': 'weekly',
+                        'priority': '0.6'
+                    })
+    except Exception as e:
+        logging.error(f"Error adding anime pages to sitemap: {e}")
+    
+    # Add top anime pages
+    try:
+        top_anime = fetch_from_jikan('/top/anime?limit=10')
+        if top_anime and top_anime.get('data'):
+            for anime in top_anime['data']:
+                if anime.get('mal_id'):
+                    anime_url = f"/anime/{anime['mal_id']}"
+                    # Avoid duplicates
+                    if not any(page['url'] == anime_url for page in pages):
+                        pages.append({
+                            'url': anime_url,
+                            'changefreq': 'monthly',
+                            'priority': '0.7'
+                        })
+    except Exception as e:
+        logging.error(f"Error adding top anime pages to sitemap: {e}")
     
     # Create XML sitemap
     xml_content = '''<?xml version="1.0" encoding="UTF-8"?>

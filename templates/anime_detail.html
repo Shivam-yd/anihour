@@ -1,6 +1,68 @@
 {% extends "base.html" %}
 
-{% block title %}Anime Details - Anihour{% endblock %}
+{% block title %}{{ anime_title|default('Anime Details') }} - Watch & Track on Anihour | {{ current_year }}{% endblock %}
+
+{% block description %}{{ anime_synopsis|default('Discover detailed information about this anime series including plot, characters, ratings, and where to watch.') }} Watch and track {{ anime_title|default('anime') }} on Anihour.{% endblock %}
+
+{% block keywords %}{{ anime_title|default('anime') }}, anime {{ current_year }}, watch anime, anime series, anime characters, MyAnimeList, anime ratings, anime review{% endblock %}
+
+{% block og_type %}video.tv_show{% endblock %}
+{% block og_title %}{{ anime_title|default('Anime Details') }} - Complete Guide & Where to Watch{% endblock %}
+{% block og_image %}{{ anime_image|default(url_for('static', filename='images/anihour-og-image.jpg', _external=True)) }}{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json" id="anime-schema">
+{
+  "@context": "https://schema.org",
+  "@type": "TVSeries",
+  "name": "{{ anime_title|default('Anime Title') }}",
+  "description": "{{ anime_synopsis|default('Anime description') }}",
+  "image": "{{ anime_image|default('') }}",
+  "genre": {{ anime_genres|default('["Animation", "Drama"]')|safe }},
+  "numberOfEpisodes": "{{ anime_episodes|default('Unknown') }}",
+  "datePublished": "{{ anime_aired_from|default('') }}",
+  "contentRating": "{{ anime_rating|default('') }}",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ anime_score|default(0) }}",
+    "bestRating": "10",
+    "worstRating": "1",
+    "ratingCount": "{{ anime_scored_by|default(0) }}"
+  },
+  "productionCompany": {
+    "@type": "Organization",
+    "name": "{{ anime_studio|default('Studio') }}"
+  },
+  "creator": {
+    "@type": "Person",
+    "name": "{{ anime_author|default('') }}"
+  },
+  "url": "{{ request.url }}",
+  "sameAs": "{{ anime_mal_url|default('') }}"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "{{ url_for('index', _external=True) }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Anime Details",
+      "item": "{{ request.url }}"
+    }
+  ]
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <div class="container mt-5 pt-5">

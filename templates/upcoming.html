@@ -1,6 +1,45 @@
 {% extends "base.html" %}
 
-{% block title %}Upcoming Anime - Anihour{% endblock %}
+{% block title %}Upcoming Anime {{ current_year }} - New Anime Releases & Schedule | Anihour{% endblock %}
+
+{% block description %}Stay ahead with upcoming anime releases {{ current_year }}. Discover new anime series, movies, and OVAs coming soon. Never miss your next favorite anime with our release calendar.{% endblock %}
+
+{% block keywords %}upcoming anime {{ current_year }}, new anime releases, anime schedule, future anime, anime calendar, upcoming anime series, new anime movies{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Upcoming Anime Releases {{ current_year }}",
+  "description": "Comprehensive list of upcoming anime series and movies with release dates and information",
+  "url": "{{ url_for('upcoming', _external=True) }}",
+  "mainEntity": {
+    "@type": "ItemList",
+    "name": "Upcoming Anime Calendar",
+    "description": "Future anime releases and their scheduled dates",
+    "numberOfItems": "20+"
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "{{ url_for('index', _external=True) }}"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Upcoming Anime",
+        "item": "{{ url_for('upcoming', _external=True) }}"
+      }
+    ]
+  }
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
