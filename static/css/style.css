@@ -882,8 +882,8 @@ body::before {
 }
 
 .promotional-banner {
-    padding: 20px;
-    margin: 20px 0;
+    padding: 10px;
+    margin: 15px 0;
     position: relative;
     overflow: hidden;
 }
