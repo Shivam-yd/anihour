@@ -235,12 +235,30 @@ class AnimeTracker {
 
     clearAllFilters() {
         const filtersPanel = document.getElementById('searchFiltersPanel');
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        
         if (filtersPanel) {
+            // Clear all checkboxes
             const checkboxes = filtersPanel.querySelectorAll('input[type="checkbox"]');
             checkboxes.forEach(checkbox => {
                 checkbox.checked = false;
             });
+            
+            // Update filter button state
             this.updateFilterButtonState();
+            
+            // Clear search input if it exists
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            
+            // Clear search results if displayed
+            if (searchResults && searchResults.innerHTML.trim()) {
+                searchResults.innerHTML = '';
+            }
+            
+            console.log('All filters and search cleared');
         }
     }
 
