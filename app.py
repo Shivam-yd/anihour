@@ -6,6 +6,7 @@ from flask_cors import CORS
 import urllib.parse
 import time
 from functools import lru_cache
+from datetime import datetime
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -14,6 +15,11 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "anime-tracker-secret-key")
 CORS(app)
+
+# Template context processor for current year
+@app.context_processor
+def inject_current_year():
+    return {'current_year': datetime.now().year}
 
 # Jikan API base URL (MyAnimeList public API)
 JIKAN_BASE_URL = "https://api.jikan.moe/v4"
@@ -122,12 +128,59 @@ def api_anime_characters(anime_id):
 
 @app.route('/api/search')
 def api_search():
-    """API endpoint for anime search"""
+    """Enhanced API endpoint for anime search with filters"""
     query = request.args.get('q', '')
-    if not query:
-        return jsonify({'error': 'Search query is required'}), 400
     
-    data = fetch_from_jikan(f'/anime?q={query}&limit=20')
+    # Build the search URL with parameters
+    search_params = ['limit=20']
+    
+    # Add query if provided
+    if query:
+        search_params.append(f'q={urllib.parse.quote(query)}')
+    else:
+        # If no query, we'll use browse endpoints with filters
+        pass
+    
+    # Add status filter
+    status = request.args.get('status')
+    if status:
+        search_params.append(f'status={status}')
+    
+    # Add type filter
+    anime_type = request.args.get('type')
+    if anime_type:
+        search_params.append(f'type={anime_type}')
+    
+    # Add genres filter (comma-separated genre IDs)
+    genres = request.args.get('genres')
+    if genres:
+        search_params.append(f'genres={genres}')
+    
+    # Add rating filter if provided
+    rating = request.args.get('rating')
+    if rating:
+        search_params.append(f'rating={rating}')
+    
+    # Add order by if provided
+    order_by = request.args.get('order_by', 'score')
+    sort = request.args.get('sort', 'desc')
+    search_params.extend([f'order_by={order_by}', f'sort={sort}'])
+    
+    # Choose appropriate endpoint based on whether we have filters or query
+    if not query and not any([status, anime_type, genres]):
+        # No query and no filters - return top anime
+        search_url = f"/top/anime?type=tv&limit=20"
+    elif not query:
+        # No query but have filters - use search with wildcard or browse
+        # For filter-only searches, we can use the anime endpoint with just filters
+        search_url = f"/anime?{'&'.join(search_params)}"
+    else:
+        # Has query - normal search
+        search_url = f"/anime?{'&'.join(search_params)}"
+    
+    logging.debug(f"Search URL: {search_url}")
+    
+    data = fetch_from_jikan(search_url)
     if data:
         return jsonify(data)
     return jsonify({'error': 'Failed to search anime'}), 500
@@ -145,7 +198,7 @@ def api_news():
                 'title': f"Top Anime: {anime.get('title', 'Unknown')}",
                 'excerpt': anime.get('synopsis', 'No description available.')[:200] + '...' if anime.get('synopsis') else 'No description available.',
                 'url': anime.get('url', '#'),
-                'date': anime.get('aired', {}).get('from', '2025-01-01'),
+                'date': anime.get('aired', {}).get('from', f'{datetime.now().year}-01-01'),
                 'author_username': 'MyAnimeList'
             }
             news_data.append(news_item)
