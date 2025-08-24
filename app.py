@@ -232,23 +232,73 @@ def api_search():
 
 @app.route('/api/news')
 def api_news():
-    """API endpoint for anime news"""
-    # Use the top anime news endpoint instead
-    data = fetch_from_jikan('/top/anime?limit=10')
-    if data:
-        # Transform the data to look like news
+    """API endpoint for anime news using recent data from current season and top anime"""
+    try:
+        # Get recent anime data from current season and top anime for news-like content
+        current_season = fetch_from_jikan('/seasons/now')
+        recent_anime = fetch_from_jikan('/anime?order_by=start_date&sort=desc&limit=10')
+        top_current = fetch_from_jikan('/top/anime?filter=airing&limit=5')
+        
         news_data = []
-        for anime in data.get('data', [])[:10]:
-            news_item = {
-                'title': f"Top Anime: {anime.get('title', 'Unknown')}",
-                'excerpt': anime.get('synopsis', 'No description available.')[:200] + '...' if anime.get('synopsis') else 'No description available.',
-                'url': anime.get('url', '#'),
-                'date': anime.get('aired', {}).get('from', f'{datetime.now().year}-01-01'),
-                'author_username': 'MyAnimeList'
-            }
-            news_data.append(news_item)
+        current_time = datetime.now()
+        
+        # Create news from current season anime
+        if current_season and current_season.get('data'):
+            for anime in current_season['data'][:5]:
+                aired_info = anime.get('aired', {}) or {}
+                synopsis = anime.get('synopsis') or 'No description available.'
+                news_data.append({
+                    'title': f"Now Airing: {anime.get('title', 'Unknown Anime')}",
+                    'excerpt': f"Currently broadcasting this season with a score of {anime.get('score', 'N/A')}/10. {synopsis[:150]}..." if len(synopsis) > 150 else synopsis,
+                    'url': anime.get('url', '#'),
+                    'date': aired_info.get('from', current_time.strftime('%Y-%m-%d')),
+                    'author_username': 'AnimeNews',
+                    'images': anime.get('images', {}),
+                    'mal_id': anime.get('mal_id'),
+                    'score': anime.get('score', 0),
+                    'type': 'current_season'
+                })
+        
+        # Create news from recently added anime
+        if recent_anime and recent_anime.get('data'):
+            for anime in recent_anime['data'][:5]:
+                synopsis = anime.get('synopsis') or 'No description available.'
+                news_data.append({
+                    'title': f"New Addition: {anime.get('title', 'Unknown Anime')}",
+                    'excerpt': f"Recently added to the database. {synopsis[:150]}..." if len(synopsis) > 150 else synopsis,
+                    'url': anime.get('url', '#'),
+                    'date': current_time.strftime('%Y-%m-%d'),
+                    'author_username': 'AnimeNews',
+                    'images': anime.get('images', {}),
+                    'mal_id': anime.get('mal_id'),
+                    'score': anime.get('score', 0),
+                    'type': 'new_anime'
+                })
+        
+        # Create news from top airing anime
+        if top_current and top_current.get('data'):
+            for anime in top_current['data'][:3]:
+                synopsis = anime.get('synopsis') or 'No description available.'
+                news_data.append({
+                    'title': f"Trending Now: {anime.get('title', 'Unknown Anime')}",
+                    'excerpt': f"One of the highest-rated currently airing anime with {anime.get('score', 'N/A')}/10 rating. {synopsis[:150]}..." if len(synopsis) > 150 else synopsis,
+                    'url': anime.get('url', '#'),
+                    'date': current_time.strftime('%Y-%m-%d'),
+                    'author_username': 'AnimeNews',
+                    'images': anime.get('images', {}),
+                    'mal_id': anime.get('mal_id'),
+                    'score': anime.get('score', 0),
+                    'type': 'trending'
+                })
+        
+        # Sort by date/relevance and return
+        news_data = sorted(news_data, key=lambda x: x.get('score') or 0, reverse=True)[:15]
+        
         return jsonify({'data': news_data})
-    return jsonify({'error': 'Failed to fetch anime news'}), 500
+        
+    except Exception as e:
+        logging.error(f"Error creating anime news: {e}")
+        return jsonify({'error': 'Failed to fetch anime news'}), 500
 
 @app.route('/api/hero-slideshow-images')
 def api_hero_slideshow_images():
