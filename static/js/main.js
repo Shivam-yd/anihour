@@ -256,6 +256,7 @@ class AnimeTracker {
             // Clear search results if displayed
             if (searchResults && searchResults.innerHTML.trim()) {
                 searchResults.innerHTML = '';
+                searchResults.style.display = 'none';
             }
             
             console.log('All filters and search cleared');
@@ -350,9 +351,13 @@ class AnimeTracker {
 
     displaySearchResults(results, query, filters = {}) {
         const container = document.getElementById('searchResults');
-        if (!container) return;
+        if (!container) {
+            console.error('Search results container not found');
+            return;
+        }
 
-        // Show the search results section
+        // Show the search results section and make it visible
+        container.style.display = 'block';
         container.classList.remove('hidden');
 
         // Create filter summary
