@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}Anihour - Current Season Anime 2025 | Top Anime Tracker & Database{% endblock %}
+{% block title %}Anihour - Current Season Anime {{ current_year }} | Top Anime Tracker & Database{% endblock %}
 
-{% block description %}Discover current season anime 2025, top-rated series, and upcoming releases. Real-time anime database with MyAnimeList integration. Track your favorite anime series.{% endblock %}
+{% block description %}Discover current season anime {{ current_year }}, top-rated series, and upcoming releases. Real-time anime database with MyAnimeList integration. Track your favorite anime series.{% endblock %}
 
-{% block keywords %}current season anime 2025, anime tracker, MyAnimeList, top anime series, upcoming anime, anime database, watch anime online, anime news{% endblock %}
+{% block keywords %}current season anime {{ current_year }}, anime tracker, MyAnimeList, top anime series, upcoming anime, anime database, watch anime online, anime news{% endblock %}
 
 {% block structured_data %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "Current Season Anime 2025",
+  "name": "Current Season Anime {{ current_year }}",
   "description": "Discover current season anime, top-rated series, and upcoming releases with real-time data from MyAnimeList.",
   "url": "{{ url_for('index', _external=True) }}",
   "mainEntity": {
@@ -47,10 +47,10 @@
             <div class="col-lg-8 col-md-12">
                 <header>
                     <h1 class="hero-title mb-4">
-                        Welcome to <span class="brand-highlight" style="color: #ff6b9d !important; -webkit-text-fill-color: #ff6b9d !important;">Anihour</span> - Your 2025 Anime Hub
+                        Welcome to <span class="brand-highlight" style="color: #ff6b9d !important; -webkit-text-fill-color: #ff6b9d !important;">Anihour</span> - Your {{ current_year }} Anime Hub
                     </h1>
                     <p class="hero-subtitle mb-4">
-                        Discover current season anime 2025, explore top-rated series, and track upcoming releases with real-time MyAnimeList data. Your ultimate anime companion.
+                        Discover current season anime {{ current_year }}, explore top-rated series, and track upcoming releases with real-time MyAnimeList data. Your ultimate anime companion.
                     </p>
                 </header>
                 <div class="hero-buttons">
@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <section class="content-section" aria-labelledby="current-season-heading">
         <div class="section-header">
             <h2 id="current-season-heading" class="section-title">
-                <i class="fas fa-tv me-3" aria-hidden="true"></i>Current Season Anime 2025
+                <i class="fas fa-tv me-3" aria-hidden="true"></i>Current Season Anime {{ current_year }}
             </h2>
             <a href="/" class="btn btn-outline-primary btn-sm" aria-label="View all current season anime">View All</a>
         </div>
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <section class="content-section" aria-labelledby="upcoming-anime-heading">
         <div class="section-header">
             <h2 id="upcoming-anime-heading" class="section-title">
-                <i class="fas fa-clock me-3" aria-hidden="true"></i>Upcoming Anime 2025
+                <i class="fas fa-clock me-3" aria-hidden="true"></i>Upcoming Anime {{ current_year }}
             </h2>
             <a href="/upcoming" class="btn btn-outline-primary btn-sm" aria-label="View all upcoming anime releases">View All</a>
         </div>

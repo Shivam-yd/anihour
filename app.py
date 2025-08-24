@@ -6,6 +6,7 @@ from flask_cors import CORS
 import urllib.parse
 import time
 from functools import lru_cache
+from datetime import datetime
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -14,6 +15,11 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "anime-tracker-secret-key")
 CORS(app)
+
+# Template context processor for current year
+@app.context_processor
+def inject_current_year():
+    return {'current_year': datetime.now().year}
 
 # Jikan API base URL (MyAnimeList public API)
 JIKAN_BASE_URL = "https://api.jikan.moe/v4"
@@ -192,7 +198,7 @@ def api_news():
                 'title': f"Top Anime: {anime.get('title', 'Unknown')}",
                 'excerpt': anime.get('synopsis', 'No description available.')[:200] + '...' if anime.get('synopsis') else 'No description available.',
                 'url': anime.get('url', '#'),
-                'date': anime.get('aired', {}).get('from', '2025-01-01'),
+                'date': anime.get('aired', {}).get('from', f'{datetime.now().year}-01-01'),
                 'author_username': 'MyAnimeList'
             }
             news_data.append(news_item)

@@ -6,8 +6,8 @@
     <title>{% block title %}Anihour - Discover Amazing Anime{% endblock %}</title>
     
     <!-- Essential Meta Tags -->
-    <meta name="description" content="{% block description %}Discover and track current season anime, top-rated series, upcoming releases. Real-time anime database powered by MyAnimeList. Your ultimate anime companion for 2025.{% endblock %}">
-    <meta name="keywords" content="{% block keywords %}anime 2025, current season anime, top anime series, anime tracker, MyAnimeList, Jikan API, upcoming anime, anime database, watch anime{% endblock %}">
+    <meta name="description" content="{% block description %}Discover and track current season anime, top-rated series, upcoming releases. Real-time anime database powered by MyAnimeList. Your ultimate anime companion for {{ current_year }}.{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}anime {{ current_year }}, current season anime, top anime series, anime tracker, MyAnimeList, Jikan API, upcoming anime, anime database, watch anime{% endblock %}">
     <meta name="author" content="Anihour">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="googlebot" content="index, follow">
@@ -98,7 +98,7 @@
       "description": "Your ultimate anime tracking and discovery platform",
       "url": "{{ url_for('index', _external=True) }}",
       "logo": "{{ url_for('static', filename='images/anihour-logo.png', _external=True) }}",
-      "foundingDate": "2025",
+      "foundingDate": "{{ current_year }}",
       "sameAs": [
         "https://www.youtube.com/@anihourofficial1471"
       ],
@@ -343,7 +343,7 @@
             <div class="row py-3">
                 <div class="col-md-6">
                     <p class="footer-copyright mb-0">
-                        &copy; 2025 Anihour. All rights reserved.
+                        &copy; {{ current_year }} Anihour. All rights reserved.
                     </p>
                 </div>
                 <div class="col-md-6 text-md-end">
