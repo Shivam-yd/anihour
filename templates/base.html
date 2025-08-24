@@ -39,6 +39,15 @@
     <meta name="msapplication-TileColor" content="#ff6b9d">
     <meta name="application-name" content="Anihour">
     <meta name="apple-mobile-web-app-title" content="Anihour">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Performance and SEO optimization -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="preload" href="{{ url_for('static', filename='css/style.css') }}" as="style">
+    <link rel="preload" href="{{ url_for('static', filename='js/main.js') }}" as="script">
     
     <!-- Preconnect to external domains for faster loading -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -267,6 +276,11 @@
 
     <!-- Main Content -->
     <main class="main-content">
+        <!-- Universal Search Results Section -->
+        <div class="container">
+            <div id="searchResults" class="search-results-section" style="display: none;"></div>
+        </div>
+        
         {% block content %}{% endblock %}
     </main>
 

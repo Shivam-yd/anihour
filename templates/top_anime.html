@@ -1,6 +1,45 @@
 {% extends "base.html" %}
 
-{% block title %}Top Anime - Anihour{% endblock %}
+{% block title %}Top Rated Anime {{ current_year }} - Best Anime Series of All Time | Anihour{% endblock %}
+
+{% block description %}Discover the highest-rated anime series of all time. Browse top-rated TV shows, movies, and OVAs with scores from MyAnimeList community. Find your next favorite anime series.{% endblock %}
+
+{% block keywords %}top anime {{ current_year }}, best anime series, highest rated anime, top anime movies, anime rankings, MyAnimeList top anime, best anime of all time{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Top Rated Anime of All Time",
+  "description": "The highest-rated anime series and movies according to MyAnimeList community ratings",
+  "url": "{{ url_for('top_anime', _external=True) }}",
+  "mainEntity": {
+    "@type": "ItemList",
+    "name": "Top Anime Rankings",
+    "description": "Best anime series ranked by community ratings",
+    "numberOfItems": "25+"
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "{{ url_for('index', _external=True) }}"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Top Anime",
+        "item": "{{ url_for('top_anime', _external=True) }}"
+      }
+    ]
+  }
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->

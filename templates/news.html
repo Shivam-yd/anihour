@@ -1,6 +1,45 @@
 {% extends "base.html" %}
 
-{% block title %}Anime News - Anihour{% endblock %}
+{% block title %}Latest Anime News {{ current_year }} - Industry Updates & Announcements | Anihour{% endblock %}
+
+{% block description %}Stay updated with latest anime news, industry announcements, series updates, and movie releases. Your source for breaking anime news and industry insights {{ current_year }}.{% endblock %}
+
+{% block keywords %}anime news {{ current_year }}, anime industry news, anime announcements, anime updates, manga news, anime movie news, anime series news{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Latest Anime News {{ current_year }}",
+  "description": "Breaking news, updates, and announcements from the anime industry",
+  "url": "{{ url_for('news', _external=True) }}",
+  "mainEntity": {
+    "@type": "ItemList",
+    "name": "Anime News Articles",
+    "description": "Latest news articles about anime industry, series, and movies",
+    "numberOfItems": "10+"
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "{{ url_for('index', _external=True) }}"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Anime News",
+        "item": "{{ url_for('news', _external=True) }}"
+      }
+    ]
+  }
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->

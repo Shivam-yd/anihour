@@ -179,7 +179,7 @@ class AnimeTracker {
 
             // Close panel when clicking outside
             document.addEventListener('click', (e) => {
-                if (!filtersPanel.contains(e.target) && !filterBtn.contains(e.target)) {
+                if (filtersPanel && filterBtn && !filtersPanel.contains(e.target) && !filterBtn.contains(e.target)) {
                     this.closeFiltersPanel();
                 }
             });
@@ -217,6 +217,8 @@ class AnimeTracker {
         const filterBtn = document.getElementById('searchFilterBtn');
         const filtersPanel = document.getElementById('searchFiltersPanel');
         
+        if (!filtersPanel || !filterBtn) return;
+        
         if (filtersPanel.classList.contains('show')) {
             this.closeFiltersPanel();
         } else {
@@ -228,6 +230,8 @@ class AnimeTracker {
     closeFiltersPanel() {
         const filterBtn = document.getElementById('searchFilterBtn');
         const filtersPanel = document.getElementById('searchFiltersPanel');
+        
+        if (!filtersPanel || !filterBtn) return;
         
         filtersPanel.classList.remove('show');
         filterBtn.classList.remove('active');
@@ -256,9 +260,11 @@ class AnimeTracker {
             // Clear search results if displayed
             if (searchResults && searchResults.innerHTML.trim()) {
                 searchResults.innerHTML = '';
+                searchResults.style.display = 'none';
+                
+                // Show page content again
+                this.showPageContent();
             }
-            
-            console.log('All filters and search cleared');
         }
     }
 
@@ -352,7 +358,11 @@ class AnimeTracker {
         const container = document.getElementById('searchResults');
         if (!container) return;
 
-        // Show the search results section
+        // Hide the main page content when showing search results
+        this.hidePageContent();
+
+        // Show the search results section and make it visible
+        container.style.display = 'block';
         container.classList.remove('hidden');
 
         // Create filter summary
@@ -445,6 +455,22 @@ class AnimeTracker {
                 </div>
             </div>
         `;
+    }
+
+    hidePageContent() {
+        // Hide main page content sections when showing search results
+        const contentSections = document.querySelectorAll('.content-section, .hero-section, .news-section');
+        contentSections.forEach(section => {
+            section.classList.add('page-content-hidden');
+        });
+    }
+
+    showPageContent() {
+        // Show main page content sections when hiding search results
+        const contentSections = document.querySelectorAll('.content-section, .hero-section, .news-section');
+        contentSections.forEach(section => {
+            section.classList.remove('page-content-hidden');
+        });
     }
 
     animateSearchResults() {
