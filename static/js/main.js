@@ -55,6 +55,11 @@ class AnimeTracker {
             this.addSmartAdToElement(logo, 0.30, 0.90);
         }
 
+        // Add ad trigger to promotional links (90% chance for returning users, 95% for new users)
+        document.querySelectorAll('.promotional-link').forEach(link => {
+            this.addSmartAdToElement(link, 0.90, 0.95);
+        });
+
         // Add ad trigger to search button (10% chance for returning users, 40% for new users)
         const searchBtn = document.querySelector('.search-btn');
         if (searchBtn) {
