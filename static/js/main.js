@@ -143,7 +143,6 @@ class AnimeTracker {
     }
 
     setupSearch() {
-        console.log('Setting up search functionality...');
         const searchForm = document.getElementById('searchForm');
         const searchInput = document.getElementById('searchInput');
         const filterBtn = document.getElementById('searchFilterBtn');
@@ -151,18 +150,9 @@ class AnimeTracker {
         const clearFiltersBtn = document.getElementById('clearFiltersBtn');
         const applyFiltersBtn = document.getElementById('applyFiltersBtn');
         
-        console.log('Search elements found:', {
-            searchForm: !!searchForm,
-            searchInput: !!searchInput,
-            filterBtn: !!filterBtn,
-            filtersPanel: !!filtersPanel
-        });
-        
         if (searchForm && searchInput) {
-            console.log('Adding search form event listener...');
             searchForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                console.log('Search form submitted with query:', searchInput.value.trim());
                 this.performSearch(searchInput.value.trim());
             });
 
@@ -189,7 +179,7 @@ class AnimeTracker {
 
             // Close panel when clicking outside
             document.addEventListener('click', (e) => {
-                if (!filtersPanel.contains(e.target) && !filterBtn.contains(e.target)) {
+                if (filtersPanel && filterBtn && !filtersPanel.contains(e.target) && !filterBtn.contains(e.target)) {
                     this.closeFiltersPanel();
                 }
             });
@@ -227,6 +217,8 @@ class AnimeTracker {
         const filterBtn = document.getElementById('searchFilterBtn');
         const filtersPanel = document.getElementById('searchFiltersPanel');
         
+        if (!filtersPanel || !filterBtn) return;
+        
         if (filtersPanel.classList.contains('show')) {
             this.closeFiltersPanel();
         } else {
@@ -238,6 +230,8 @@ class AnimeTracker {
     closeFiltersPanel() {
         const filterBtn = document.getElementById('searchFilterBtn');
         const filtersPanel = document.getElementById('searchFiltersPanel');
+        
+        if (!filtersPanel || !filterBtn) return;
         
         filtersPanel.classList.remove('show');
         filterBtn.classList.remove('active');
@@ -268,8 +262,6 @@ class AnimeTracker {
                 searchResults.innerHTML = '';
                 searchResults.style.display = 'none';
             }
-            
-            console.log('All filters and search cleared');
         }
     }
 
@@ -324,14 +316,11 @@ class AnimeTracker {
     }
 
     async performSearch(query) {
-        console.log('performSearch called with query:', query);
         // Get filters to check if we have any search criteria
         const filters = this.getSearchFilters();
-        console.log('Filters found:', filters);
         
         // Allow search if we have either a query OR filters
         if (!query && Object.keys(filters).length === 0) {
-            console.log('No search criteria provided - returning');
             return; // No search criteria provided
         }
 
@@ -364,10 +353,7 @@ class AnimeTracker {
 
     displaySearchResults(results, query, filters = {}) {
         const container = document.getElementById('searchResults');
-        if (!container) {
-            console.error('Search results container not found');
-            return;
-        }
+        if (!container) return;
 
         // Show the search results section and make it visible
         container.style.display = 'block';
