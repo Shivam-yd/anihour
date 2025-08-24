@@ -145,6 +145,10 @@ class AnimeTracker {
     setupSearch() {
         const searchForm = document.getElementById('searchForm');
         const searchInput = document.getElementById('searchInput');
+        const filterBtn = document.getElementById('searchFilterBtn');
+        const filtersPanel = document.getElementById('searchFiltersPanel');
+        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+        const applyFiltersBtn = document.getElementById('applyFiltersBtn');
         
         if (searchForm && searchInput) {
             searchForm.addEventListener('submit', (e) => {
@@ -164,6 +168,131 @@ class AnimeTracker {
                 }, 300);
             });
         }
+
+        // Filter panel toggle
+        if (filterBtn && filtersPanel) {
+            filterBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.toggleFiltersPanel();
+            });
+
+            // Close panel when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!filtersPanel.contains(e.target) && !filterBtn.contains(e.target)) {
+                    this.closeFiltersPanel();
+                }
+            });
+        }
+
+        // Clear filters button
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', () => {
+                this.clearAllFilters();
+            });
+        }
+
+        // Apply filters button
+        if (applyFiltersBtn) {
+            applyFiltersBtn.addEventListener('click', () => {
+                const query = searchInput.value.trim();
+                if (query) {
+                    this.performSearch(query);
+                }
+                this.closeFiltersPanel();
+            });
+        }
+
+        // Auto-search when filters change
+        if (filtersPanel) {
+            const filterInputs = filtersPanel.querySelectorAll('input[type="checkbox"]');
+            filterInputs.forEach(input => {
+                input.addEventListener('change', () => {
+                    this.updateFilterButtonState();
+                });
+            });
+        }
+    }
+
+    toggleFiltersPanel() {
+        const filterBtn = document.getElementById('searchFilterBtn');
+        const filtersPanel = document.getElementById('searchFiltersPanel');
+        
+        if (filtersPanel.classList.contains('show')) {
+            this.closeFiltersPanel();
+        } else {
+            filtersPanel.classList.add('show');
+            filterBtn.classList.add('active');
+        }
+    }
+
+    closeFiltersPanel() {
+        const filterBtn = document.getElementById('searchFilterBtn');
+        const filtersPanel = document.getElementById('searchFiltersPanel');
+        
+        filtersPanel.classList.remove('show');
+        filterBtn.classList.remove('active');
+    }
+
+    clearAllFilters() {
+        const filtersPanel = document.getElementById('searchFiltersPanel');
+        if (filtersPanel) {
+            const checkboxes = filtersPanel.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            this.updateFilterButtonState();
+        }
+    }
+
+    updateFilterButtonState() {
+        const filterBtn = document.getElementById('searchFilterBtn');
+        const filtersPanel = document.getElementById('searchFiltersPanel');
+        
+        if (filtersPanel && filterBtn) {
+            const checkedBoxes = filtersPanel.querySelectorAll('input[type="checkbox"]:checked');
+            if (checkedBoxes.length > 0) {
+                filterBtn.classList.add('active');
+            } else {
+                filterBtn.classList.remove('active');
+            }
+        }
+    }
+
+    getSearchFilters() {
+        const filtersPanel = document.getElementById('searchFiltersPanel');
+        if (!filtersPanel) return {};
+
+        const filters = {};
+
+        // Get status filters
+        const statusFilters = [];
+        filtersPanel.querySelectorAll('input[name="status"]:checked').forEach(input => {
+            statusFilters.push(input.value);
+        });
+        if (statusFilters.length > 0) {
+            filters.status = statusFilters[0]; // API only supports one status at a time
+        }
+
+        // Get type filters
+        const typeFilters = [];
+        filtersPanel.querySelectorAll('input[name="type"]:checked').forEach(input => {
+            typeFilters.push(input.value);
+        });
+        if (typeFilters.length > 0) {
+            filters.type = typeFilters[0]; // API only supports one type at a time
+        }
+
+        // Get genre filters
+        const genreFilters = [];
+        filtersPanel.querySelectorAll('input[name="genres"]:checked').forEach(input => {
+            genreFilters.push(input.value);
+        });
+        if (genreFilters.length > 0) {
+            filters.genres = genreFilters.join(',');
+        }
+
+        return filters;
     }
 
     async performSearch(query) {
@@ -171,11 +300,19 @@ class AnimeTracker {
 
         try {
             this.showLoading('searchResults');
-            const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+            
+            // Build search URL with filters
+            const filters = this.getSearchFilters();
+            const params = new URLSearchParams({
+                q: query,
+                ...filters
+            });
+
+            const response = await fetch(`/api/search?${params.toString()}`);
             const data = await response.json();
 
             if (response.ok && data.data) {
-                this.displaySearchResults(data.data, query);
+                this.displaySearchResults(data.data, query, filters);
             } else {
                 this.showError('searchResults', 'Failed to search anime');
             }
@@ -185,32 +322,108 @@ class AnimeTracker {
         }
     }
 
-    displaySearchResults(results, query) {
+    displaySearchResults(results, query, filters = {}) {
         const container = document.getElementById('searchResults');
         if (!container) return;
 
+        // Show the search results section
+        container.classList.remove('hidden');
+
+        // Create filter summary
+        const filterSummary = this.createFilterSummary(filters);
+
         if (results.length === 0) {
             container.innerHTML = `
+                <div class="search-results-header">
+                    <h3>Search Results for "<span class="search-query">${query}</span>"</h3>
+                    <span class="search-results-count">0 results</span>
+                </div>
+                ${filterSummary}
                 <div class="error-message">
                     <div class="error-title">No Results Found</div>
-                    <p>No anime found for "${query}". Try different keywords.</p>
+                    <p>No anime found for "${query}". Try adjusting your filters or different keywords.</p>
                 </div>
             `;
             return;
         }
 
-        const html = `
-            <div class="section-header">
-                <h2 class="section-title">Search Results for "${query}"</h2>
-                <p class="section-subtitle">Found ${results.length} anime</p>
+        container.innerHTML = `
+            <div class="search-results-header">
+                <h3>Search Results for "<span class="search-query">${query}</span>"</h3>
+                <span class="search-results-count">${results.length} results</span>
             </div>
+            ${filterSummary}
             <div class="anime-grid">
                 ${results.map(anime => this.createAnimeCard(anime)).join('')}
             </div>
         `;
 
-        container.innerHTML = html;
-        this.setupAnimeCardEvents();
+        // Animate in the results
+        this.animateSearchResults();
+    }
+
+    createFilterSummary(filters) {
+        const activeFilters = [];
+
+        if (filters.status) {
+            const statusMap = {
+                airing: 'Ongoing',
+                upcoming: 'Upcoming', 
+                complete: 'Completed'
+            };
+            activeFilters.push(`Status: ${statusMap[filters.status] || filters.status}`);
+        }
+
+        if (filters.type) {
+            const typeMap = {
+                tv: 'TV Series',
+                movie: 'Movies',
+                ova: 'OVA'
+            };
+            activeFilters.push(`Type: ${typeMap[filters.type] || filters.type}`);
+        }
+
+        if (filters.genres) {
+            const genreMap = {
+                '1': 'Action', '22': 'Romance', '8': 'Drama', '4': 'Comedy',
+                '10': 'Fantasy', '24': 'Sci-Fi', '27': 'Shounen', '62': 'Isekai',
+                '14': 'Horror', '31': 'Super Power', '37': 'Supernatural', '26': 'School'
+            };
+            const genreNames = filters.genres.split(',').map(id => genreMap[id] || id);
+            activeFilters.push(`Genres: ${genreNames.join(', ')}`);
+        }
+
+        if (activeFilters.length === 0) {
+            return '';
+        }
+
+        return `
+            <div class="search-filter-summary">
+                <div class="filter-summary-title">Active Filters:</div>
+                <div class="filter-summary-tags">
+                    ${activeFilters.map(filter => 
+                        `<span class="filter-tag">${filter}</span>`
+                    ).join('')}
+                    <button class="clear-filters-link" onclick="animeTracker.clearAllFilters()">
+                        Clear all
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    animateSearchResults() {
+        const cards = document.querySelectorAll('#searchResults .anime-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.4s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
     }
 
     async showSearchSuggestions(query) {
@@ -726,7 +939,8 @@ class AnimeTracker {
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new AnimeTracker();
+    // Create global reference for inline handlers
+    window.animeTracker = new AnimeTracker();
 });
 
 // Service Worker removed to prevent errors

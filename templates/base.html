@@ -165,13 +165,102 @@
                 </ul>
                 
                 <!-- Search Form -->
-                <form class="search-form" id="searchForm">
-                    <input type="text" class="form-control search-input" id="searchInput" 
-                           placeholder="Search anime..." autocomplete="off">
-                    <button type="submit" class="search-btn">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </form>
+                <div class="search-container">
+                    <form class="search-form" id="searchForm">
+                        <input type="text" class="form-control search-input" id="searchInput" 
+                               placeholder="Search anime..." autocomplete="off">
+                        <button type="button" class="search-filter-btn" id="searchFilterBtn">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                    
+                    <!-- Search Filters Panel (Hidden by default) -->
+                    <div class="search-filters-panel" id="searchFiltersPanel">
+                        <div class="filter-section">
+                            <h6 class="filter-title">Status</h6>
+                            <div class="filter-group">
+                                <label class="filter-option">
+                                    <input type="checkbox" name="status" value="airing"> Ongoing
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="status" value="upcoming"> Upcoming
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="status" value="complete"> Completed
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-section">
+                            <h6 class="filter-title">Type</h6>
+                            <div class="filter-group">
+                                <label class="filter-option">
+                                    <input type="checkbox" name="type" value="tv"> TV Series
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="type" value="movie"> Movies
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="type" value="ova"> OVA
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-section">
+                            <h6 class="filter-title">Genres</h6>
+                            <div class="filter-group filter-grid">
+                                <label class="filter-option">
+                                    <input type="checkbox" name="genres" value="1"> Action
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="genres" value="22"> Romance
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="genres" value="8"> Drama
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="genres" value="4"> Comedy
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="genres" value="10"> Fantasy
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="genres" value="24"> Sci-Fi
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="genres" value="27"> Shounen
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="genres" value="62"> Isekai
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="genres" value="14"> Horror
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="genres" value="31"> Super Power
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="genres" value="37"> Supernatural
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="genres" value="26"> School
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-actions">
+                            <button type="button" class="btn btn-secondary btn-sm" id="clearFiltersBtn">
+                                Clear All
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm" id="applyFiltersBtn">
+                                Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>

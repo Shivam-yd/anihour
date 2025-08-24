@@ -122,12 +122,43 @@ def api_anime_characters(anime_id):
 
 @app.route('/api/search')
 def api_search():
-    """API endpoint for anime search"""
+    """Enhanced API endpoint for anime search with filters"""
     query = request.args.get('q', '')
     if not query:
         return jsonify({'error': 'Search query is required'}), 400
     
-    data = fetch_from_jikan(f'/anime?q={query}&limit=20')
+    # Build the search URL with parameters
+    search_params = [f'q={urllib.parse.quote(query)}', 'limit=20']
+    
+    # Add status filter
+    status = request.args.get('status')
+    if status:
+        search_params.append(f'status={status}')
+    
+    # Add type filter
+    anime_type = request.args.get('type')
+    if anime_type:
+        search_params.append(f'type={anime_type}')
+    
+    # Add genres filter (comma-separated genre IDs)
+    genres = request.args.get('genres')
+    if genres:
+        search_params.append(f'genres={genres}')
+    
+    # Add rating filter if provided
+    rating = request.args.get('rating')
+    if rating:
+        search_params.append(f'rating={rating}')
+    
+    # Add order by if provided
+    order_by = request.args.get('order_by', 'score')
+    sort = request.args.get('sort', 'desc')
+    search_params.extend([f'order_by={order_by}', f'sort={sort}'])
+    
+    search_url = f"/anime?{'&'.join(search_params)}"
+    logging.debug(f"Search URL: {search_url}")
+    
+    data = fetch_from_jikan(search_url)
     if data:
         return jsonify(data)
     return jsonify({'error': 'Failed to search anime'}), 500
