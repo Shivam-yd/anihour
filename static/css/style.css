@@ -918,6 +918,29 @@ body::before {
     }
 }
 
+/* Footer Special Offer Link */
+.footer-special-offer {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent-color);
+    text-decoration: none;
+    border: 1px solid rgba(69, 183, 209, 0.3);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    background: rgba(69, 183, 209, 0.05);
+}
+
+.footer-special-offer:hover {
+    color: white;
+    border-color: var(--accent-color);
+    background: rgba(69, 183, 209, 0.15);
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(69, 183, 209, 0.2);
+}
+
 /* Loading State */
 .loading-state {
     text-align: center;
