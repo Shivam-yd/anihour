@@ -143,6 +143,7 @@ class AnimeTracker {
     }
 
     setupSearch() {
+        console.log('Setting up search functionality...');
         const searchForm = document.getElementById('searchForm');
         const searchInput = document.getElementById('searchInput');
         const filterBtn = document.getElementById('searchFilterBtn');
@@ -150,9 +151,18 @@ class AnimeTracker {
         const clearFiltersBtn = document.getElementById('clearFiltersBtn');
         const applyFiltersBtn = document.getElementById('applyFiltersBtn');
         
+        console.log('Search elements found:', {
+            searchForm: !!searchForm,
+            searchInput: !!searchInput,
+            filterBtn: !!filterBtn,
+            filtersPanel: !!filtersPanel
+        });
+        
         if (searchForm && searchInput) {
+            console.log('Adding search form event listener...');
             searchForm.addEventListener('submit', (e) => {
                 e.preventDefault();
+                console.log('Search form submitted with query:', searchInput.value.trim());
                 this.performSearch(searchInput.value.trim());
             });
 
@@ -314,11 +324,14 @@ class AnimeTracker {
     }
 
     async performSearch(query) {
+        console.log('performSearch called with query:', query);
         // Get filters to check if we have any search criteria
         const filters = this.getSearchFilters();
+        console.log('Filters found:', filters);
         
         // Allow search if we have either a query OR filters
         if (!query && Object.keys(filters).length === 0) {
+            console.log('No search criteria provided - returning');
             return; // No search criteria provided
         }
 
