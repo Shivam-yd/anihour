@@ -1194,7 +1194,18 @@ body::before {
 }
 
 .search-results-section {
-    margin: 40px 0;
+    margin: 20px 0;
+    position: relative;
+    z-index: 10;
+    background: var(--bg-primary);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.page-content-hidden {
+    display: none !important;
 }
 
 /* Anime Cards */

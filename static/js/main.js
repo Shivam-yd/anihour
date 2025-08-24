@@ -261,6 +261,9 @@ class AnimeTracker {
             if (searchResults && searchResults.innerHTML.trim()) {
                 searchResults.innerHTML = '';
                 searchResults.style.display = 'none';
+                
+                // Show page content again
+                this.showPageContent();
             }
         }
     }
@@ -354,6 +357,9 @@ class AnimeTracker {
     displaySearchResults(results, query, filters = {}) {
         const container = document.getElementById('searchResults');
         if (!container) return;
+
+        // Hide the main page content when showing search results
+        this.hidePageContent();
 
         // Show the search results section and make it visible
         container.style.display = 'block';
@@ -449,6 +455,22 @@ class AnimeTracker {
                 </div>
             </div>
         `;
+    }
+
+    hidePageContent() {
+        // Hide main page content sections when showing search results
+        const contentSections = document.querySelectorAll('.content-section, .hero-section, .news-section');
+        contentSections.forEach(section => {
+            section.classList.add('page-content-hidden');
+        });
+    }
+
+    showPageContent() {
+        // Show main page content sections when hiding search results
+        const contentSections = document.querySelectorAll('.content-section, .hero-section, .news-section');
+        contentSections.forEach(section => {
+            section.classList.remove('page-content-hidden');
+        });
     }
 
     animateSearchResults() {
