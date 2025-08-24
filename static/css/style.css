@@ -882,10 +882,31 @@ body::before {
 }
 
 .promotional-banner {
-    padding: 8px;
+    padding: 5px 0;
     margin: 0;
     position: relative;
     overflow: hidden;
+}
+
+.btn-compact {
+    background: linear-gradient(90deg, #ff6b9d, #4ecdc4);
+    border: none;
+    color: white !important;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(255, 107, 157, 0.25);
+    display: inline-block;
+}
+
+.btn-compact:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 107, 157, 0.35);
+    color: white !important;
+    text-decoration: none;
 }
 
 .promotional-banner::before {
