@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Download Anime - Anihour{% endblock %}
+
+{% block description %}Download your favorite anime series and movies with Anihour's premium download service.{% endblock %}
+
+{% block keywords %}anime download, download anime, anime episodes, anime movies, high quality anime{% endblock %}
+
+{% block content %}
+<div class="download-page">
+    <!-- Hero Section with Download Banner -->
+    <section class="download-hero bg-pattern">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <div class="download-banner">
+                        <div class="download-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h1 class="download-title">Download Premium Anime</h1>
+                        <p class="download-subtitle">Access high-quality anime episodes and movies directly to your device</p>
+                        
+                        <!-- Main Download Button -->
+                        <div class="download-button-container">
+                            <button id="downloadBtn" class="download-btn">
+                                <i class="fas fa-cloud-download-alt"></i>
+                                <span>Click Here to Proceed to Download</span>
+                                <div class="download-btn-glow"></div>
+                            </button>
+                        </div>
+                        
+                        <!-- Download Info -->
+                        <div class="download-info">
+                            <div class="download-features">
+                                <div class="feature-item">
+                                    <i class="fas fa-hd-video"></i>
+                                    <span>HD Quality</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-bolt"></i>
+                                    <span>Fast Downloads</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    <span>Mobile Ready</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Safe & Secure</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Steps Section -->
+    <section class="download-steps">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title">How to Download</h2>
+                    <p class="section-subtitle">Follow these simple steps to access premium anime downloads</p>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <div class="step-icon">
+                            <i class="fas fa-mouse-pointer"></i>
+                        </div>
+                        <h4>Click Download</h4>
+                        <p>Click the download button above to begin the process</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <div class="step-icon">
+                            <i class="fas fa-external-link-alt"></i>
+                        </div>
+                        <h4>Complete Verification</h4>
+                        <p>Complete the quick verification process for access</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <div class="step-icon">
+                            <i class="fab fa-telegram-plane"></i>
+                        </div>
+                        <h4>Join Telegram</h4>
+                        <p>Access our premium download bot on Telegram</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <div class="step-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h4>Start Downloading</h4>
+                        <p>Browse and download your favorite anime series</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="download-features-section bg-pattern">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title">Premium Features</h2>
+                    <p class="section-subtitle">What you get with Anihour downloads</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <h4>Latest Episodes</h4>
+                        <p>Get the newest anime episodes as soon as they're released, with multiple quality options.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-language"></i>
+                        </div>
+                        <h4>Multiple Languages</h4>
+                        <p>Choose from subtitled and dubbed versions in various languages for your convenience.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-compress-arrows-alt"></i>
+                        </div>
+                        <h4>Optimized Files</h4>
+                        <p>Compressed files that maintain quality while saving storage space on your device.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Download JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const downloadBtn = document.getElementById('downloadBtn');
+    const adLink = 'https://www.profitableratecpm.com/zyjgv1dna?key=474c2feaf6c5c846dfb4d0fc703962cc';
+    const telegramLink = 'https://t.me/Anihour_bot';
+    
+    let clickCount = 0;
+    
+    downloadBtn.addEventListener('click', function() {
+        clickCount++;
+        
+        if (clickCount === 1) {
+            // First click - show ad in new tab
+            window.open(adLink, '_blank');
+            
+            // Update button text
+            this.innerHTML = `
+                <i class="fas fa-telegram-plane"></i>
+                <span>Click Again to Access Download Bot</span>
+                <div class="download-btn-glow"></div>
+            `;
+            
+            // Add some visual feedback
+            this.classList.add('clicked-once');
+            
+        } else if (clickCount >= 2) {
+            // Second click and beyond - redirect to Telegram
+            window.open(telegramLink, '_blank');
+            
+            // Reset button for future use
+            setTimeout(() => {
+                clickCount = 0;
+                this.innerHTML = `
+                    <i class="fas fa-cloud-download-alt"></i>
+                    <span>Click Here to Proceed to Download</span>
+                    <div class="download-btn-glow"></div>
+                `;
+                this.classList.remove('clicked-once');
+            }, 3000);
+        }
+    });
+});
+</script>
+{% endblock %}
