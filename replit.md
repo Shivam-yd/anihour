@@ -8,6 +8,16 @@ Anihour is a colorful and professional anime tracking web application built with
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+**Migration Completed (August 26, 2025)**
+- Successfully migrated from Replit Agent to Replit environment
+- Added mobile performance optimizations to reduce loading glitches
+- Implemented viewport optimizations and touch-friendly interactions
+- Disabled heavy animations on mobile devices for smoother performance
+- Added delayed loading for non-critical features on mobile
+- All dependencies properly configured and working
+
 ## System Architecture
 
 ### Frontend Architecture

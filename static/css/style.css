@@ -30,7 +30,7 @@ body {
     overflow-x: hidden;
 }
 
-/* Animated Background */
+/* Animated Background - Mobile optimized */
 body::before {
     content: '';
     position: fixed;
@@ -42,7 +42,23 @@ body::before {
                 radial-gradient(circle at 80% 20%, #4ecdc422 0%, transparent 50%),
                 radial-gradient(circle at 40% 80%, #45b7d122 0%, transparent 50%);
     z-index: -1;
+    /* Disable animations on mobile for better performance */
     animation: backgroundShift 15s ease-in-out infinite;
+}
+
+/* Disable heavy animations on mobile devices */
+@media (max-width: 768px) {
+    body::before {
+        animation: none;
+    }
+    
+    .bg-pattern::after {
+        animation: none;
+    }
+    
+    .navbar-logo {
+        animation: none;
+    }
 }
 
 /* Decorative Background Pattern */
@@ -76,6 +92,57 @@ body::before {
 @keyframes backgroundShift {
     0%, 100% { transform: translateY(0px) scale(1); }
     50% { transform: translateY(-10px) scale(1.02); }
+}
+
+/* Mobile Performance Optimizations */
+@media (max-width: 768px) {
+    /* Reduce GPU-intensive effects on mobile */
+    .navbar {
+        backdrop-filter: none;
+    }
+    
+    .search-filters-panel {
+        backdrop-filter: none;
+    }
+    
+    /* Simplify animations on mobile */
+    .anime-card {
+        transition: transform 0.2s ease !important;
+    }
+    
+    .anime-card:hover {
+        transform: none !important;
+    }
+    
+    /* Reduce shadow complexity on mobile */
+    .anime-card {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+    }
+    
+    /* Mobile-specific navbar optimizations */
+    .navbar-brand:hover .navbar-logo {
+        transform: none;
+    }
+    
+    /* Optimize image loading on mobile */
+    .anime-card img {
+        will-change: auto;
+    }
+    
+    /* Reduce complex gradients on mobile */
+    .hero-section {
+        background: var(--dark-bg) !important;
+    }
+    
+    /* Optimize search on mobile */
+    .search-input {
+        width: 250px !important;
+    }
+    
+    /* Touch optimization */
+    .anime-card, .nav-link, .search-btn {
+        touch-action: manipulation;
+    }
 }
 
 /* Header Styles */
