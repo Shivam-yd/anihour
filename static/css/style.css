@@ -147,8 +147,8 @@ body::before {
 
 /* Download Banner Section */
 .download-banner-section {
-    padding: 40px 0;
-    margin-top: 60px;
+    padding: 40px 0 20px 0;
+    margin-top: 80px;
 }
 
 /* Simple Download Banner */

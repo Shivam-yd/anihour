@@ -18,7 +18,7 @@ Preferred communication style: Simple, everyday language.
 - Added delayed loading for non-critical features on mobile
 - Created hidden download banner embedded in home page (accessible via /?download=true)
 - Implemented two-click smart ad system: first click shows ad, second redirects to Telegram bot
-- Banner appears at bottom of home page with "Download" in bold and subtitle text
+- Banner appears at top of home page with "Download" in bold and subtitle text
 - Completely hidden from navigation, only accessible via special URL parameter
 - All dependencies properly configured and working
 

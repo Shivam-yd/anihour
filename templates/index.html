@@ -36,6 +36,26 @@
 {% endblock %}
 
 {% block content %}
+<!-- Hidden Download Banner (only shows with ?download=true parameter) -->
+<section id="downloadBanner" class="download-banner-section" style="display: none;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="download-banner-simple">
+                    <div class="download-content">
+                        <h2 class="download-text"><strong>Download</strong></h2>
+                        <p class="download-subtitle">Click here to proceed further to download on Telegram</p>
+                        <button id="downloadBtn" class="download-btn-simple">
+                            <i class="fab fa-telegram-plane"></i>
+                            <span>Proceed to Download</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Hero Section -->
 <div class="hero-section">
     <!-- Background Slideshow -->
@@ -274,26 +294,6 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="loading-state">
                 <div class="loading-spinner"></div>
                 <p>Loading upcoming anime...</p>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Hidden Download Banner (only shows with ?download=true parameter) -->
-    <section id="downloadBanner" class="download-banner-section" style="display: none;">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="download-banner-simple">
-                        <div class="download-content">
-                            <h2 class="download-text"><strong>Download</strong></h2>
-                            <p class="download-subtitle">Click here to proceed further to download on Telegram</p>
-                            <button id="downloadBtn" class="download-btn-simple">
-                                <i class="fab fa-telegram-plane"></i>
-                                <span>Proceed to Download</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
