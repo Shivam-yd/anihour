@@ -10,12 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-**Migration Completed (August 26, 2025)**
+**Migration and Enhancements Completed (August 26, 2025)**
 - Successfully migrated from Replit Agent to Replit environment
 - Added mobile performance optimizations to reduce loading glitches
 - Implemented viewport optimizations and touch-friendly interactions
 - Disabled heavy animations on mobile devices for smoother performance
 - Added delayed loading for non-critical features on mobile
+- Created hidden download page (/download-anime) with smart ad integration
+- Implemented two-click system: first click shows ad, second redirects to Telegram bot
+- Page features simple banner with regular site content (hero, top anime, upcoming)
 - All dependencies properly configured and working
 
 ## System Architecture
