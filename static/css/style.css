@@ -30,7 +30,7 @@ body {
     overflow-x: hidden;
 }
 
-/* Animated Background */
+/* Animated Background - Mobile optimized */
 body::before {
     content: '';
     position: fixed;
@@ -42,7 +42,23 @@ body::before {
                 radial-gradient(circle at 80% 20%, #4ecdc422 0%, transparent 50%),
                 radial-gradient(circle at 40% 80%, #45b7d122 0%, transparent 50%);
     z-index: -1;
+    /* Disable animations on mobile for better performance */
     animation: backgroundShift 15s ease-in-out infinite;
+}
+
+/* Disable heavy animations on mobile devices */
+@media (max-width: 768px) {
+    body::before {
+        animation: none;
+    }
+    
+    .bg-pattern::after {
+        animation: none;
+    }
+    
+    .navbar-logo {
+        animation: none;
+    }
 }
 
 /* Decorative Background Pattern */
@@ -76,6 +92,188 @@ body::before {
 @keyframes backgroundShift {
     0%, 100% { transform: translateY(0px) scale(1); }
     50% { transform: translateY(-10px) scale(1.02); }
+}
+
+/* Mobile Performance Optimizations */
+@media (max-width: 768px) {
+    /* Reduce GPU-intensive effects on mobile */
+    .navbar {
+        backdrop-filter: none;
+    }
+    
+    .search-filters-panel {
+        backdrop-filter: none;
+    }
+    
+    /* Simplify animations on mobile */
+    .anime-card {
+        transition: transform 0.2s ease !important;
+    }
+    
+    .anime-card:hover {
+        transform: none !important;
+    }
+    
+    /* Reduce shadow complexity on mobile */
+    .anime-card {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+    }
+    
+    /* Mobile-specific navbar optimizations */
+    .navbar-brand:hover .navbar-logo {
+        transform: none;
+    }
+    
+    /* Optimize image loading on mobile */
+    .anime-card img {
+        will-change: auto;
+    }
+    
+    /* Reduce complex gradients on mobile */
+    .hero-section {
+        background: var(--dark-bg) !important;
+    }
+    
+    /* Optimize search on mobile */
+    .search-input {
+        width: 250px !important;
+    }
+    
+    /* Touch optimization */
+    .anime-card, .nav-link, .search-btn {
+        touch-action: manipulation;
+    }
+}
+
+/* Download Banner Section */
+.download-banner-section {
+    padding: 15px 0 10px 0;
+    margin-top: 80px;
+}
+
+/* Simple Download Banner */
+.download-banner-simple {
+    background: var(--gradient-2);
+    border-radius: 8px;
+    padding: 12px 24px;
+    box-shadow: 0 4px 16px rgba(255, 107, 157, 0.2);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.download-banner-simple::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    animation: bannerShimmer 4s infinite;
+}
+
+@keyframes bannerShimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.download-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.download-text {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    line-height: 1;
+}
+
+.download-banner-simple .download-subtitle {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    line-height: 1;
+}
+
+.download-btn-simple {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(10px);
+    white-space: nowrap;
+}
+
+.download-btn-simple:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.download-btn-simple.clicked-once {
+    background: rgba(69, 183, 209, 0.3);
+    border-color: rgba(69, 183, 209, 0.5);
+}
+
+.download-btn-simple.clicked-once:hover {
+    background: rgba(69, 183, 209, 0.4);
+}
+
+/* Mobile responsiveness for banner */
+@media (max-width: 768px) {
+    .download-content {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+    
+    .download-text {
+        font-size: 1.1rem;
+    }
+    
+    .download-banner-simple .download-subtitle {
+        font-size: 0.75rem;
+    }
+    
+    .download-btn-simple {
+        padding: 5px 14px;
+        font-size: 0.8rem;
+    }
+    
+    .download-banner-simple {
+        max-height: 80px;
+        padding: 10px 16px;
+        font-size: 1rem;
+    }
+    
+    .download-banner-simple {
+        padding: 15px 20px;
+        margin: 0 10px;
+    }
 }
 
 /* Header Styles */

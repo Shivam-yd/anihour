@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>{% block title %}Anihour - Discover Amazing Anime{% endblock %}</title>
     
     <!-- Essential Meta Tags -->
@@ -48,6 +48,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="preload" href="{{ url_for('static', filename='css/style.css') }}" as="style">
     <link rel="preload" href="{{ url_for('static', filename='js/main.js') }}" as="script">
+    
+    <!-- Mobile performance optimization -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+        /* Critical CSS for mobile loading */
+        @media (max-width: 768px) {
+            body { 
+                font-size: 14px;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            * { 
+                -webkit-tap-highlight-color: transparent;
+                -webkit-touch-callout: none;
+            }
+        }
+    </style>
     
     <!-- Preconnect to external domains for faster loading -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net">

@@ -8,11 +8,23 @@ class AnimeTracker {
     }
 
     init() {
+        // Check if mobile device for performance optimization
+        this.isMobile = window.innerWidth <= 768;
+        
         this.setupEventListeners();
         this.loadPageContent();
         this.setupSearch();
-        this.setupScrollAnimations();
-        this.setupSmartAdSystem();
+        
+        // Delay heavy features on mobile for better initial load
+        if (this.isMobile) {
+            setTimeout(() => {
+                this.setupScrollAnimations();
+                this.setupSmartAdSystem();
+            }, 1000);
+        } else {
+            this.setupScrollAnimations();
+            this.setupSmartAdSystem();
+        }
     }
 
     setupSmartAdSystem() {
@@ -503,25 +515,36 @@ class AnimeTracker {
     }
 
     loadPageContent() {
-        switch (this.currentPage) {
-            case '/':
-                this.loadHomepageSections();
-                break;
-            case '/top':
-                // Let the top anime page handle its own loading with filter buttons
-                this.initializeTopAnimePage();
-                break;
-            case '/upcoming':
-                this.loadUpcomingAnime();
-                break;
-            case '/news':
-                this.loadNews();
-                break;
-            default:
-                if (this.currentPage.includes('/anime/')) {
-                    const animeId = this.currentPage.split('/anime/')[1];
-                    this.loadAnimeDetails(animeId);
-                }
+        // Use requestIdleCallback for non-critical loading on mobile
+        const loadContent = () => {
+            switch (this.currentPage) {
+                case '/':
+                    this.loadHomepageSections();
+                    break;
+                case '/top':
+                    // Let the top anime page handle its own loading with filter buttons
+                    this.initializeTopAnimePage();
+                    break;
+                case '/upcoming':
+                    this.loadUpcomingAnime();
+                    break;
+                case '/news':
+                    this.loadNews();
+                    break;
+                default:
+                    if (this.currentPage.includes('/anime/')) {
+                        const animeId = this.currentPage.split('/anime/')[1];
+                        this.loadAnimeDetails(animeId);
+                    }
+            }
+        };
+
+        // Optimize loading based on device performance
+        if (this.isMobile) {
+            // Delay content loading slightly on mobile for smoother initial render
+            setTimeout(loadContent, 200);
+        } else {
+            loadContent();
         }
     }
 

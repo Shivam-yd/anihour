@@ -74,6 +74,8 @@ def upcoming():
     """Upcoming anime page"""
     return render_template('upcoming.html')
 
+
+
 @app.route('/news')
 def news():
     """Anime news page"""
