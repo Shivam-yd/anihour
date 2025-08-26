@@ -145,6 +145,12 @@ body::before {
     }
 }
 
+/* Download Banner Section */
+.download-banner-section {
+    padding: 40px 0;
+    margin-top: 60px;
+}
+
 /* Simple Download Banner */
 .download-banner-simple {
     background: var(--gradient-2);

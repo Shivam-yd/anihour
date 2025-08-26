@@ -277,6 +277,26 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>
     </section>
+    
+    <!-- Hidden Download Banner (only shows with ?download=true parameter) -->
+    <section id="downloadBanner" class="download-banner-section" style="display: none;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="download-banner-simple">
+                        <div class="download-content">
+                            <h2 class="download-text"><strong>Download</strong></h2>
+                            <p class="download-subtitle">Click here to proceed further to download on Telegram</p>
+                            <button id="downloadBtn" class="download-btn-simple">
+                                <i class="fab fa-telegram-plane"></i>
+                                <span>Proceed to Download</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 
 <!-- Decorative Background Pattern -->
@@ -288,6 +308,57 @@ document.addEventListener('DOMContentLoaded', function() {
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Check for special URL parameter to show download banner
+    const urlParams = new URLSearchParams(window.location.search);
+    const showDownload = urlParams.get('download') === 'true';
+    
+    if (showDownload) {
+        const downloadBanner = document.getElementById('downloadBanner');
+        if (downloadBanner) {
+            downloadBanner.style.display = 'block';
+        }
+        
+        // Initialize download button functionality
+        const downloadBtn = document.getElementById('downloadBtn');
+        if (downloadBtn) {
+            const adLink = 'https://www.profitableratecpm.com/zyjgv1dna?key=474c2feaf6c5c846dfb4d0fc703962cc';
+            const telegramLink = 'https://t.me/Anihour_bot';
+            
+            let clickCount = 0;
+            
+            downloadBtn.addEventListener('click', function() {
+                clickCount++;
+                
+                if (clickCount === 1) {
+                    // First click - show ad in new tab
+                    window.open(adLink, '_blank');
+                    
+                    // Update button text
+                    this.innerHTML = `
+                        <i class="fab fa-telegram-plane"></i>
+                        <span>Click Again to Access Telegram</span>
+                    `;
+                    
+                    // Add visual feedback
+                    this.classList.add('clicked-once');
+                    
+                } else if (clickCount >= 2) {
+                    // Second click and beyond - redirect to Telegram
+                    window.open(telegramLink, '_blank');
+                    
+                    // Reset button for future use
+                    setTimeout(() => {
+                        clickCount = 0;
+                        this.innerHTML = `
+                            <i class="fab fa-telegram-plane"></i>
+                            <span>Proceed to Download</span>
+                        `;
+                        this.classList.remove('clicked-once');
+                    }, 3000);
+                }
+            });
+        }
+    }
     // Hero Background Slideshow
     let slideshowImages = [];
     let currentSlideIndex = 0;

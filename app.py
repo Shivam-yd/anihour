@@ -74,10 +74,7 @@ def upcoming():
     """Upcoming anime page"""
     return render_template('upcoming.html')
 
-@app.route('/download-anime')
-def download_anime():
-    """Hidden download page - not linked in navigation"""
-    return render_template('download.html')
+
 
 @app.route('/news')
 def news():
